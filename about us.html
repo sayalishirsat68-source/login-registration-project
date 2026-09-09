@@ -610,10 +610,33 @@ body {
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
 
-    <!-- View Switcher (For Preview Purposes Only) -->
-    <div class="bg-slate-900 p-4 text-center text-white flex justify-center gap-4 sticky top-0 z-50 shadow-md">
-        <button onclick="switchView('frontend')" id="btn-frontend" class="px-4 py-2 bg-blue-600 rounded font-semibold text-sm transition">👁️ View Public Website</button>
-        <button onclick="switchView('backend')" id="btn-backend" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold text-sm transition">⚙️ View Admin Dashboard</button>
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="text-xl font-bold text-blue-700">Udaan Foundation</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-semibold">NGO Portal</span>
+        </div>
+        <nav>
+            <ul class="nav-links flex flex-wrap items-center gap-4 text-sm font-medium text-gray-700 list-none m-0 p-0">
+                <li><a href="index.html" class="hover:text-blue-600">Home</a></li>
+                <li><a href="about us.html" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1">About Us</a></li>
+                <li><a href="projects.html" class="hover:text-blue-600">Projects</a></li>
+                <li><a href="media.html" class="hover:text-blue-600">Media</a></li>
+                <li><a href="join us.html" class="hover:text-blue-600">Join Us</a></li>
+                <li><a href="compaign.html" class="hover:text-blue-600">Campaign</a></li>
+                <li><a href="donate.html" class="hover:text-blue-600">Donate</a></li>
+                <li><a href="contact us.html" class="hover:text-blue-600">Contact Us</a></li>
+                <li class="auth-nav-item">
+                    <a href="login.html" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded font-semibold text-xs transition">Login / Register</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- View Switcher (For Preview & Admin Management) -->
+    <div class="bg-slate-900 p-3 text-center text-white flex justify-center items-center gap-4 shadow-md">
+        <button onclick="switchView('frontend')" id="btn-frontend" class="px-4 py-2 bg-blue-600 rounded font-semibold text-xs tracking-wide uppercase transition">👁️ Public Website View</button>
+        <button onclick="switchView('backend')" id="btn-backend" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold text-xs tracking-wide uppercase transition">⚙️ Live Admin CMS & Records</button>
     </div>
 
     <!-- ================================================================= -->
@@ -622,8 +645,9 @@ body {
     <main id="frontend-view" class="max-w-4xl mx-auto my-10 bg-white p-8 shadow-sm rounded-lg border border-gray-100">
         
         <!-- Welcome Hero Banner -->
-        <header class="bg-blue-600 text-white p-8 rounded-lg text-center mb-10">
+        <header class="bg-blue-600 text-white p-8 rounded-lg text-center mb-10 shadow-sm">
             <h1 class="text-3xl font-bold tracking-wide">Welcome to Udaan Foundation</h1>
+            <p class="text-blue-100 mt-2 text-sm max-w-xl mx-auto">Grassroots social transformation through education, nutrition, and compassionate community care.</p>
         </header>
 
         <!-- Our Mission and Vision -->
@@ -638,11 +662,11 @@ body {
         <section class="mb-10">
             <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Story</h2>
             <div class="flex flex-col md:flex-row gap-6 items-start">
-                <p class="text-gray-600 leading-relaxed flex-1">
-                    Founded in 2015, our journey started with a small group of passionate volunteers addressing local community issues. Over the years, we have grown into a fully dedicated NGO, reaching thousands of individuals across multiple regions and driving lasting social change.
+                <p id="public-story-text" class="text-gray-600 leading-relaxed flex-1">
+                    Loading our story...
                 </p>
-                <div class="w-full md:w-1/3 bg-gray-200 h-40 rounded flex items-center justify-center text-gray-400 font-medium">
-                    [ Story Image Placeholder ]
+                <div class="w-full md:w-1/3 bg-gray-100 h-48 rounded overflow-hidden shadow-sm flex items-center justify-center">
+                    <img id="public-story-img" src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80" alt="NGO Field Work" class="w-full h-full object-cover">
                 </div>
             </div>
         </section>
@@ -650,37 +674,24 @@ body {
         <!-- Our Core Values -->
         <section class="mb-10">
             <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Core Values</h2>
-            <ul class="list-disc pl-5 space-y-2 text-gray-600">
-                <li><strong class="text-gray-800">Integrity:</strong> Operating transparently and responsibly in all actions.</li>
-                <li><strong class="text-gray-800">Respect:</strong> Valuing the diversity and dignity of every individual.</li>
-                <li><strong class="text-gray-800">Empathy:</strong> Understanding and addressing the challenges faced by our communities.</li>
+            <ul id="public-values-list" class="list-disc pl-5 space-y-2 text-gray-600">
+                <li>Loading values...</li>
             </ul>
         </section>
 
         <!-- Our Programs -->
         <section class="mb-10">
             <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Programs</h2>
-            <ul class="list-disc pl-5 space-y-2 text-gray-600">
-                <li><strong class="text-gray-800">Education & Child Support:</strong> Providing school supplies, scholarships, and free tutoring.</li>
-                <li><strong class="text-gray-800">Health & Nutrition:</strong> Organizing regular free health checkup camps and clean water distribution.</li>
-                <li><strong class="text-gray-800">Welfare & Development:</strong> Offering skill development and vocational training for women.</li>
+            <ul id="public-programs-list" class="list-disc pl-5 space-y-2 text-gray-600">
+                <li>Loading programs...</li>
             </ul>
         </section>
 
         <!-- Meet Our Team -->
         <section class="mb-6">
             <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Meet Our Team</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-4 bg-gray-50 rounded border border-gray-200">
-                    <h3 class="font-bold text-gray-800">John Doe</h3>
-                    <p class="text-sm text-blue-600 font-medium mb-2">Founder & Executive Director</p>
-                    <p class="text-sm text-gray-600">John has over 12 years of experience managing non-profit organizations and overseeing community welfare projects globally.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded border border-gray-200">
-                    <h3 class="font-bold text-gray-800">Jane Smith</h3>
-                    <p class="text-sm text-blue-600 font-medium mb-2">Program Coordinator</p>
-                    <p class="text-sm text-gray-600">Jane coordinates field operations, ensuring all resources reach the targeted communities efficiently.</p>
-                </div>
+            <div id="public-team-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>Loading team members...</div>
             </div>
         </section>
     </main>
@@ -692,309 +703,569 @@ body {
     <main id="backend-view" class="hidden max-w-4xl mx-auto my-10 bg-white p-8 shadow-sm rounded-lg border border-gray-100">
         
         <!-- Admin Dashboard Banner -->
-        <header class="bg-blue-600 text-white p-6 rounded-lg mb-8 flex justify-between items-center">
+        <header class="bg-blue-600 text-white p-6 rounded-lg mb-8 flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold tracking-wide">Admin Dashboard</h1>
-                <p class="text-xs text-blue-100 mt-1">Manage all text and imagery content for your About Us page</p>
+                <h1 class="text-2xl font-bold tracking-wide">Admin CMS & Records Dashboard</h1>
+                <p class="text-xs text-blue-100 mt-1">Manage public site content, volunteer applications, and registered users connected to Node.js backend</p>
             </div>
-            <span class="text-xs bg-blue-700 px-3 py-1.5 rounded-full font-medium">Logged in as Admin</span>
+            <div id="admin-badge" class="text-xs bg-blue-700 px-3 py-1.5 rounded-full font-medium">
+                Admin Mode Active
+            </div>
         </header>
 
-        <!-- Section: Our Story -->
+        <!-- Status Feedback Box -->
+        <div id="admin-feedback" class="hidden mb-6 p-4 rounded-md text-sm font-semibold"></div>
+
+        <!-- Section: Edit Story -->
         <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
             <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
-                <span>Edit Our Story Section</span>
-                <span class="text-xs text-gray-400 font-normal">Section Reference</span>
+                <span>1. Edit Our Story Section</span>
+                <span class="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded font-semibold">Backend Synced</span>
             </h2>
-            <div class="space-y-4">
+            <form id="story-form" onsubmit="handleStoryUpdate(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Story Content Text</label>
-                    <textarea rows="4" class="w-full p-2.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">Founded in 2015, our journey started with a small group of passionate volunteers addressing local community issues. Over the years, we have grown into a fully dedicated NGO, reaching thousands of individuals across multiple regions and driving lasting social change.</textarea>
+                    <textarea id="admin-story-text" rows="4" class="w-full p-2.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white" required></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Story Section Image</label>
-                    <input type="file" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Story Image URL</label>
+                    <input type="url" id="admin-story-img" class="w-full p-2 text-sm border border-gray-300 rounded bg-white" placeholder="https://images.unsplash.com/...">
                 </div>
                 <div class="flex gap-2 justify-end pt-2">
-                    <button class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded transition">UPDATE STORY</button>
-                    <button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded transition">DELETE CONTENT</button>
+                    <button type="submit" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded transition">UPDATE STORY</button>
                 </div>
-            </div>
+            </form>
         </section>
 
         <!-- Section: Core Values -->
         <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Edit Core Values</h2>
+            <h2 class="text-lg font-bold text-gray-800 mb-4">2. Manage Core Values</h2>
             
-            <div class="space-y-3 mb-6">
-                <!-- Row 1 -->
-                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
-                    <input type="text" value="Integrity" class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium" readonly>
-                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
-                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
-                </div>
-                <!-- Row 2 -->
-                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
-                    <input type="text" value="Respect" class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium" readonly>
-                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
-                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
-                </div>
+            <div id="admin-values-list" class="space-y-3 mb-6">
+                <!-- Dynamically loaded -->
             </div>
 
             <!-- Add Core Value Form -->
-            <div class="border-t pt-4">
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Add New Value Name</label>
-                <div class="flex gap-2">
-                    <input type="text" placeholder="e.g. Accountability" class="flex-1 p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-
-                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">
-                        ADD VALUE
+            <form id="value-add-form" onsubmit="handleAddValue(event)" class="border-t pt-4">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Add New Core Value</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="new-value-name" placeholder="Value Name (e.g. Accountability)" class="flex-1 p-2 text-sm border border-gray-300 rounded bg-white" required>
+                    <input type="text" id="new-value-desc" placeholder="Brief description..." class="flex-1 p-2 text-sm border border-gray-300 rounded bg-white">
+                    <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded transition whitespace-nowrap">
+                        + ADD VALUE
                     </button>
                 </div>
-            </div>
+            </form>
         </section>
 
         <!-- Section: Programs -->
         <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">3. Manage Our Programs</h2>
 
-            <h2 class="text-lg font-bold text-gray-800 mb-4">
-                Edit Our Programs
-            </h2>
-
-            <div class="space-y-3">
-
-                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
-                    <input
-                        type="text"
-                        value="Education & Child Support"
-                        class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium"
-                        readonly>
-
-                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
-                        UPDATE
-                    </button>
-
-                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
-                        DELETE
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
-                    <input
-                        type="text"
-                        value="Health & Nutrition"
-                        class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium"
-                        readonly>
-
-                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
-                        UPDATE
-                    </button>
-
-                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
-                        DELETE
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
-                    <input
-                        type="text"
-                        value="Welfare & Development"
-                        class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium"
-                        readonly>
-
-                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
-                        UPDATE
-                    </button>
-
-                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
-                        DELETE
-                    </button>
-                </div>
-
+            <div id="admin-programs-list" class="space-y-3 mb-6">
+                <!-- Dynamically loaded -->
             </div>
 
             <!-- Add Program -->
-            <div class="border-t mt-6 pt-4">
-
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
-                    Add New Program
-                </label>
-
-                <div class="flex gap-2">
-
-                    <input
-                        type="text"
-                        placeholder="e.g. Women Empowerment"
-                        class="flex-1 p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-
-                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">
-                        ADD PROGRAM
+            <form id="program-add-form" onsubmit="handleAddProgram(event)" class="border-t pt-4">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Add New Program</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="new-program-name" placeholder="Program Title (e.g. Clean Drinking Water)" class="flex-1 p-2 text-sm border border-gray-300 rounded bg-white" required>
+                    <input type="text" id="new-program-desc" placeholder="Brief program mission..." class="flex-1 p-2 text-sm border border-gray-300 rounded bg-white">
+                    <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded transition whitespace-nowrap">
+                        + ADD PROGRAM
                     </button>
-
                 </div>
-
-            </div>
-
+            </form>
         </section>
-
 
         <!-- Section: Team -->
         <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">4. Manage Team Members</h2>
 
-            <h2 class="text-lg font-bold text-gray-800 mb-4">
-                Edit Our Team
-            </h2>
-
-            <div class="space-y-4">
-
-                <div class="bg-white p-4 border border-gray-200 rounded">
-
-                    <input
-                        type="text"
-                        value="John Doe"
-                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
-
-                    <input
-                        type="text"
-                        value="Founder & Executive Director"
-                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
-
-                    <textarea
-                        rows="3"
-                        class="w-full p-2 text-sm border border-gray-300 rounded">John has over 12 years of experience managing non-profit organizations and overseeing community welfare projects globally.</textarea>
-
-                    <div class="flex gap-2 justify-end mt-3">
-
-                        <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
-                            UPDATE
-                        </button>
-
-                        <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
-                            DELETE
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="bg-white p-4 border border-gray-200 rounded">
-
-                    <input
-                        type="text"
-                        value="Jane Smith"
-                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
-
-                    <input
-                        type="text"
-                        value="Program Coordinator"
-                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
-
-                    <textarea
-                        rows="3"
-                        class="w-full p-2 text-sm border border-gray-300 rounded">Jane coordinates field operations, ensuring all resources reach the targeted communities efficiently.</textarea>
-
-                    <div class="flex gap-2 justify-end mt-3">
-
-                        <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
-                            UPDATE
-                        </button>
-
-                        <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
-                            DELETE
-                        </button>
-
-                    </div>
-
-                </div>
-
+            <div id="admin-team-list" class="space-y-4 mb-6">
+                <!-- Dynamically loaded -->
             </div>
 
             <!-- Add Team Member -->
-            <div class="border-t mt-6 pt-4">
-
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
-                    Add New Team Member
-                </label>
-
+            <form id="team-add-form" onsubmit="handleAddTeamMember(event)" class="border-t pt-4">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Add New Team Member</label>
                 <div class="space-y-2">
-
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        class="w-full p-2 text-sm border border-gray-300 rounded">
-
-                    <input
-                        type="text"
-                        placeholder="Designation"
-                        class="w-full p-2 text-sm border border-gray-300 rounded">
-
-                    <textarea
-                        rows="3"
-                        placeholder="Description"
-                        class="w-full p-2 text-sm border border-gray-300 rounded"></textarea>
-
-                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">
-                        ADD TEAM MEMBER
-                    </button>
-
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input type="text" id="new-member-name" placeholder="Full Name" class="p-2 text-sm border border-gray-300 rounded bg-white" required>
+                        <input type="text" id="new-member-role" placeholder="Designation (e.g. Field Operations Lead)" class="p-2 text-sm border border-gray-300 rounded bg-white" required>
+                    </div>
+                    <textarea id="new-member-bio" rows="2" placeholder="Brief biography and background..." class="w-full p-2 text-sm border border-gray-300 rounded bg-white"></textarea>
+                    <div class="text-right">
+                        <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded transition">
+                            + ADD TEAM MEMBER
+                        </button>
+                    </div>
                 </div>
-
-            </div>
-
+            </form>
         </section>
 
+        <!-- Section: Volunteer Applications -->
+        <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                <span>5. Recent Volunteer Applications (Join Us)</span>
+                <button onclick="loadVolunteers()" class="text-xs text-blue-600 hover:underline">Refresh</button>
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border border-gray-200 bg-white rounded">
+                    <thead class="bg-gray-100 text-xs font-semibold text-gray-600">
+                        <tr>
+                            <th class="p-3">Name</th>
+                            <th class="p-3">Email & Phone</th>
+                            <th class="p-3">Interests / Note</th>
+                            <th class="p-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-volunteers-table" class="divide-y divide-gray-200">
+                        <tr><td colspan="4" class="p-3 text-gray-500 text-center">Loading applications...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section: Registered Portal Users -->
+        <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                <span>6. Registered Users & Access Roles</span>
+                <button onclick="loadUsers()" class="text-xs text-blue-600 hover:underline">Refresh</button>
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border border-gray-200 bg-white rounded">
+                    <thead class="bg-gray-100 text-xs font-semibold text-gray-600">
+                        <tr>
+                            <th class="p-3">User ID</th>
+                            <th class="p-3">Full Name</th>
+                            <th class="p-3">Email</th>
+                            <th class="p-3">Role</th>
+                            <th class="p-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-users-table" class="divide-y divide-gray-200">
+                        <tr><td colspan="5" class="p-3 text-gray-500 text-center">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- Dashboard Footer -->
-        <footer class="border-t pt-6 text-center">
-
-            <p class="text-xs text-gray-400">
-                NGO Admin Dashboard
-            </p>
-
+        <footer class="border-t pt-6 text-center text-xs text-gray-400">
+            NGO Admin CMS connected to Node.js / Express API
         </footer>
 
     </main>
 
-
-    <!-- JavaScript -->
+    <!-- Client JavaScript -->
+    <script src="app.js"></script>
     <script>
+        let aboutState = {
+            storyText: '',
+            storyImage: '',
+            values: [],
+            programs: [],
+            team: []
+        };
 
+        // Switch between Public View and Admin Dashboard View
         function switchView(view) {
-
             const frontend = document.getElementById("frontend-view");
             const backend = document.getElementById("backend-view");
-
-            const frontendButton = document.getElementById("btn-frontend");
-            const backendButton = document.getElementById("btn-backend");
+            const frontendBtn = document.getElementById("btn-frontend");
+            const backendBtn = document.getElementById("btn-backend");
 
             if (view === "frontend") {
-
                 frontend.classList.remove("hidden");
                 backend.classList.add("hidden");
-
-                frontendButton.classList.remove("bg-gray-700");
-                frontendButton.classList.add("bg-blue-600");
-
-                backendButton.classList.remove("bg-blue-600");
-                backendButton.classList.add("bg-gray-700");
-
+                frontendBtn.className = "px-4 py-2 bg-blue-600 rounded font-semibold text-xs tracking-wide uppercase transition";
+                backendBtn.className = "px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold text-xs tracking-wide uppercase transition";
             } else {
-
                 backend.classList.remove("hidden");
                 frontend.classList.add("hidden");
-
-                backendButton.classList.remove("bg-gray-700");
-                backendButton.classList.add("bg-blue-600");
-
-                frontendButton.classList.remove("bg-blue-600");
-                frontendButton.classList.add("bg-gray-700");
-
+                backendBtn.className = "px-4 py-2 bg-blue-600 rounded font-semibold text-xs tracking-wide uppercase transition";
+                frontendBtn.className = "px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold text-xs tracking-wide uppercase transition";
+                loadVolunteers();
+                loadUsers();
             }
-
         }
 
-    </script>
+        function showAdminNotice(message, isError = false) {
+            const fb = document.getElementById('admin-feedback');
+            fb.className = isError 
+                ? 'mb-6 p-4 rounded-md text-sm font-semibold bg-red-100 text-red-800 border border-red-200 block'
+                : 'mb-6 p-4 rounded-md text-sm font-semibold bg-green-100 text-green-800 border border-green-200 block';
+            fb.textContent = message;
+            setTimeout(() => { fb.className = 'hidden mb-6 p-4 rounded-md text-sm font-semibold'; }, 4000);
+        }
 
+        // Fetch About Data from Backend API
+        async function fetchAboutData() {
+            try {
+                const res = await fetch('/api/about');
+                if (!res.ok) throw new Error('Failed to fetch content');
+                aboutState = await res.json();
+                renderPublicView();
+                renderAdminView();
+            } catch (err) {
+                console.error(err);
+                showToast('Could not load dynamic content from server.', 'error');
+            }
+        }
+
+        // Render Public Website Elements
+        function renderPublicView() {
+            document.getElementById('public-story-text').textContent = aboutState.storyText;
+            if (aboutState.storyImage) {
+                document.getElementById('public-story-img').src = aboutState.storyImage;
+            }
+
+            // Values
+            const valuesEl = document.getElementById('public-values-list');
+            valuesEl.innerHTML = aboutState.values.map(v => `
+                <li><strong class="text-gray-800">${v.name}:</strong> ${v.description}</li>
+            `).join('');
+
+            // Programs
+            const progsEl = document.getElementById('public-programs-list');
+            progsEl.innerHTML = aboutState.programs.map(p => `
+                <li><strong class="text-gray-800">${p.name}:</strong> ${p.description}</li>
+            `).join('');
+
+            // Team
+            const teamEl = document.getElementById('public-team-grid');
+            teamEl.innerHTML = aboutState.team.map(m => `
+                <div class="p-4 bg-gray-50 rounded border border-gray-200">
+                    <h3 class="font-bold text-gray-800">${m.name}</h3>
+                    <p class="text-sm text-blue-600 font-medium mb-2">${m.designation}</p>
+                    <p class="text-sm text-gray-600">${m.bio}</p>
+                </div>
+            `).join('');
+        }
+
+        // Render Admin CMS View
+        function renderAdminView() {
+            document.getElementById('admin-story-text').value = aboutState.storyText;
+            document.getElementById('admin-story-img').value = aboutState.storyImage || '';
+
+            // Values List
+            const valuesList = document.getElementById('admin-values-list');
+            valuesList.innerHTML = aboutState.values.map(v => `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-white p-3 border border-gray-200 rounded">
+                    <input type="text" id="val-name-${v.id}" value="${v.name}" class="flex-1 p-2 text-sm border border-gray-300 rounded font-medium">
+                    <input type="text" id="val-desc-${v.id}" value="${v.description || ''}" placeholder="Description" class="flex-1 p-2 text-sm border border-gray-300 rounded text-gray-600">
+                    <div class="flex gap-2">
+                        <button onclick="handleUpdateValue(${v.id})" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
+                        <button onclick="handleDeleteValue(${v.id})" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Programs List
+            const progsList = document.getElementById('admin-programs-list');
+            progsList.innerHTML = aboutState.programs.map(p => `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-white p-3 border border-gray-200 rounded">
+                    <input type="text" id="prog-name-${p.id}" value="${p.name}" class="flex-1 p-2 text-sm border border-gray-300 rounded font-medium">
+                    <input type="text" id="prog-desc-${p.id}" value="${p.description || ''}" placeholder="Description" class="flex-1 p-2 text-sm border border-gray-300 rounded text-gray-600">
+                    <div class="flex gap-2">
+                        <button onclick="handleUpdateProgram(${p.id})" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
+                        <button onclick="handleDeleteProgram(${p.id})" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Team List
+            const teamList = document.getElementById('admin-team-list');
+            teamList.innerHTML = aboutState.team.map(m => `
+                <div class="bg-white p-4 border border-gray-200 rounded space-y-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input type="text" id="member-name-${m.id}" value="${m.name}" class="p-2 text-sm border border-gray-300 rounded font-medium">
+                        <input type="text" id="member-role-${m.id}" value="${m.designation}" class="p-2 text-sm border border-gray-300 rounded text-blue-600 font-medium">
+                    </div>
+                    <textarea id="member-bio-${m.id}" rows="2" class="w-full p-2 text-sm border border-gray-300 rounded text-gray-600">${m.bio}</textarea>
+                    <div class="flex gap-2 justify-end pt-1">
+                        <button onclick="handleUpdateTeamMember(${m.id})" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
+                        <button onclick="handleDeleteTeamMember(${m.id})" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 1. Update Story Handler
+        async function handleStoryUpdate(e) {
+            e.preventDefault();
+            const storyText = document.getElementById('admin-story-text').value;
+            const storyImage = document.getElementById('admin-story-img').value;
+
+            try {
+                const res = await fetch('/api/about/story', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ storyText, storyImage })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.storyText = storyText;
+                    if (storyImage) aboutState.storyImage = storyImage;
+                    renderPublicView();
+                    showAdminNotice('Story updated successfully in backend!');
+                    showToast('Story updated successfully!');
+                } else {
+                    showAdminNotice(data.message || 'Error updating story', true);
+                }
+            } catch (err) {
+                showAdminNotice('Network error updating story', true);
+            }
+        }
+
+        // 2. Values Handlers
+        async function handleAddValue(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-value-name').value;
+            const description = document.getElementById('new-value-desc').value;
+
+            try {
+                const res = await fetch('/api/about/values', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.values = data.values;
+                    renderPublicView();
+                    renderAdminView();
+                    document.getElementById('value-add-form').reset();
+                    showAdminNotice('Core value added!');
+                    showToast('Core value added!');
+                }
+            } catch (err) {
+                showAdminNotice('Error adding value', true);
+            }
+        }
+
+        async function handleUpdateValue(id) {
+            const name = document.getElementById(`val-name-${id}`).value;
+            const description = document.getElementById(`val-desc-${id}`).value;
+
+            try {
+                const res = await fetch(`/api/about/values/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.values = data.values;
+                    renderPublicView();
+                    showAdminNotice('Core value updated!');
+                    showToast('Core value updated!');
+                }
+            } catch (err) {
+                showAdminNotice('Error updating value', true);
+            }
+        }
+
+        async function handleDeleteValue(id) {
+            if (!confirm('Are you sure you want to delete this core value?')) return;
+            try {
+                const res = await fetch(`/api/about/values/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.values = data.values;
+                    renderPublicView();
+                    renderAdminView();
+                    showAdminNotice('Core value removed');
+                    showToast('Core value removed');
+                }
+            } catch (err) {
+                showAdminNotice('Error removing value', true);
+            }
+        }
+
+        // 3. Programs Handlers
+        async function handleAddProgram(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-program-name').value;
+            const description = document.getElementById('new-program-desc').value;
+
+            try {
+                const res = await fetch('/api/about/programs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.programs = data.programs;
+                    renderPublicView();
+                    renderAdminView();
+                    document.getElementById('program-add-form').reset();
+                    showAdminNotice('Program added successfully!');
+                    showToast('Program added successfully!');
+                }
+            } catch (err) {
+                showAdminNotice('Error adding program', true);
+            }
+        }
+
+        async function handleUpdateProgram(id) {
+            const name = document.getElementById(`prog-name-${id}`).value;
+            const description = document.getElementById(`prog-desc-${id}`).value;
+
+            try {
+                const res = await fetch(`/api/about/programs/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.programs = data.programs;
+                    renderPublicView();
+                    showAdminNotice('Program updated!');
+                    showToast('Program updated!');
+                }
+            } catch (err) {
+                showAdminNotice('Error updating program', true);
+            }
+        }
+
+        async function handleDeleteProgram(id) {
+            if (!confirm('Are you sure you want to delete this program?')) return;
+            try {
+                const res = await fetch(`/api/about/programs/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.programs = data.programs;
+                    renderPublicView();
+                    renderAdminView();
+                    showAdminNotice('Program removed');
+                    showToast('Program removed');
+                }
+            } catch (err) {
+                showAdminNotice('Error removing program', true);
+            }
+        }
+
+        // 4. Team Handlers
+        async function handleAddTeamMember(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-member-name').value;
+            const designation = document.getElementById('new-member-role').value;
+            const bio = document.getElementById('new-member-bio').value;
+
+            try {
+                const res = await fetch('/api/about/team', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, designation, bio })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.team = data.team;
+                    renderPublicView();
+                    renderAdminView();
+                    document.getElementById('team-add-form').reset();
+                    showAdminNotice('Team member added!');
+                    showToast('Team member added!');
+                }
+            } catch (err) {
+                showAdminNotice('Error adding team member', true);
+            }
+        }
+
+        async function handleUpdateTeamMember(id) {
+            const name = document.getElementById(`member-name-${id}`).value;
+            const designation = document.getElementById(`member-role-${id}`).value;
+            const bio = document.getElementById(`member-bio-${id}`).value;
+
+            try {
+                const res = await fetch(`/api/about/team/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, designation, bio })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.team = data.team;
+                    renderPublicView();
+                    showAdminNotice('Team member details updated!');
+                    showToast('Team member details updated!');
+                }
+            } catch (err) {
+                showAdminNotice('Error updating member', true);
+            }
+        }
+
+        async function handleDeleteTeamMember(id) {
+            if (!confirm('Are you sure you want to remove this team member?')) return;
+            try {
+                const res = await fetch(`/api/about/team/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) {
+                    aboutState.team = data.team;
+                    renderPublicView();
+                    renderAdminView();
+                    showAdminNotice('Team member removed');
+                    showToast('Team member removed');
+                }
+            } catch (err) {
+                showAdminNotice('Error deleting member', true);
+            }
+        }
+
+        // 5. Load Volunteers
+        async function loadVolunteers() {
+            const tbody = document.getElementById('admin-volunteers-table');
+            try {
+                const res = await fetch('/api/volunteers');
+                const data = await res.json();
+                if (data.volunteers && data.volunteers.length > 0) {
+                    tbody.innerHTML = data.volunteers.map(v => `
+                        <tr>
+                            <td class="p-3 font-semibold text-gray-800">${v.full_name}</td>
+                            <td class="p-3 text-xs text-gray-600">${v.email}<br>${v.phone}</td>
+                            <td class="p-3 text-xs text-gray-700">${v.message}</td>
+                            <td class="p-3"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded font-medium">${v.status}</span></td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-gray-500 text-center">No volunteer applications yet.</td></tr>';
+                }
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-red-500 text-center">Unable to load volunteers.</td></tr>';
+            }
+        }
+
+        // 6. Load Users
+        async function loadUsers() {
+            const tbody = document.getElementById('admin-users-table');
+            try {
+                const res = await fetch('/api/users');
+                const data = await res.json();
+                if (data.users && data.users.length > 0) {
+                    tbody.innerHTML = data.users.map(u => `
+                        <tr>
+                            <td class="p-3 text-xs font-mono text-gray-500">#${u.user_id}</td>
+                            <td class="p-3 font-semibold text-gray-800">${u.full_name}</td>
+                            <td class="p-3 text-xs text-gray-600">${u.email}</td>
+                            <td class="p-3"><span class="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded font-medium">${u.role}</span></td>
+                            <td class="p-3"><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded font-medium">${u.status}</span></td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-gray-500 text-center">No users registered yet.</td></tr>';
+                }
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-red-500 text-center">Unable to load users.</td></tr>';
+            }
+        }
+
+        // Initialize on load
+        fetchAboutData();
+    </script>
 </body>
 </html>

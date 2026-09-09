@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Campaigns - NGO</title>
+    <title>Our Campaigns - Hope Hand NGO</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Base Reset & Fonts */
         * {
             margin: 0;
             padding: 0;
@@ -19,52 +19,9 @@
             line-height: 1.6;
         }
 
-        /* Navigation Bar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #1f3a52;
-            padding: 15px 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            flex-wrap: wrap;
-        }
-
-        .nav-links li {
-            margin-left: 15px;
-            margin-bottom: 5px;
-        }
-
-        .nav-links a {
-            color: #cbd5e1;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover, .nav-links li a[href="campaign.html"] {
-            color: #ff9f43;
-        }
-
         /* Hero Banner Section */
         .campaign-hero {
-            background: linear-gradient(rgba(31, 58, 82, 0.85), rgba(31, 58, 82, 0.85)), url('https://unsplash.com') no-repeat center center/cover;
+            background: linear-gradient(rgba(31, 58, 82, 0.88), rgba(31, 58, 82, 0.88)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
             color: white;
             text-align: center;
             padding: 60px 20px;
@@ -72,13 +29,13 @@
 
         .campaign-hero h1 {
             font-size: 36px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .campaign-hero p {
-            font-size: 18px;
+            font-size: 16px;
             max-width: 700px;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 20px auto;
             color: #cbd5e1;
         }
 
@@ -87,23 +44,25 @@
             display: flex;
             justify-content: space-around;
             background: #fff;
-            padding: 20px;
+            padding: 25px;
             max-width: 1000px;
             margin: -30px auto 40px auto;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
+            border: 1px solid #e2e8f0;
         }
 
         .stat-item h3 {
             font-size: 28px;
             color: #ff9f43;
+            font-weight: bold;
         }
 
         .stat-item p {
             font-size: 14px;
-            color: #666;
-            font-weight: 500;
+            color: #64748b;
+            font-weight: 600;
         }
 
         /* Main Campaigns Container */
@@ -117,11 +76,10 @@
             color: #1f3a52;
             margin-bottom: 25px;
             border-left: 5px solid #ff9f43;
-            padding-left: 10px;
+            padding-left: 12px;
             font-size: 24px;
         }
 
-        /* Campaign Grid Configuration */
         .campaign-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -129,12 +87,12 @@
             margin-bottom: 50px;
         }
 
-        /* Campaign Cards */
         .campaign-card {
             background: #fff;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease;
@@ -146,7 +104,7 @@
 
         .campaign-img {
             height: 200px;
-            background-color: #ddd;
+            background-color: #cbd5e1;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -156,40 +114,40 @@
             position: absolute;
             top: 15px;
             left: 15px;
-            background: #28a745;
+            background: #10b981;
             color: white;
-            padding: 5px 12px;
-            font-size: 12px;
+            padding: 4px 12px;
+            font-size: 11px;
             font-weight: bold;
             border-radius: 20px;
             text-transform: uppercase;
         }
 
         .badge.completed {
-            background: #6c757d;
+            background: #64748b;
         }
 
         .campaign-body {
-            padding: 25px;
+            padding: 22px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
 
         .campaign-body h2 {
-            font-size: 20px;
+            font-size: 19px;
             color: #1f3a52;
             margin-bottom: 10px;
         }
 
         .campaign-body p {
             font-size: 14px;
-            color: #666;
+            color: #4b5563;
             margin-bottom: 20px;
             flex-grow: 1;
+            line-height: 1.6;
         }
 
-        /* Progress Bar elements */
         .progress-container {
             margin-bottom: 20px;
         }
@@ -198,21 +156,22 @@
             display: flex;
             justify-content: space-between;
             font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #475569;
         }
 
         .progress-bar {
-            background: #e9ecef;
-            height: 8px;
-            border-radius: 5px;
+            background: #e2e8f0;
+            height: 9px;
+            border-radius: 6px;
             overflow: hidden;
         }
 
         .progress-fill {
             background: #ff9f43;
             height: 100%;
-            border-radius: 5px;
+            border-radius: 6px;
         }
 
         .campaign-btn {
@@ -221,34 +180,25 @@
             background: #1f3a52;
             color: white;
             text-decoration: none;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 11px;
+            border-radius: 6px;
             font-weight: bold;
             font-size: 14px;
-            transition: background 0.3s ease;
+            transition: background 0.2s ease;
         }
 
         .campaign-btn:hover {
-            background: #152839;
+            background: #ff9f43;
         }
 
         .campaign-btn.secondary {
-            background: #ebdcd0;
-            color: #1f3a52;
-            pointer-events: none; /* Prevents action on completed items */
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            cursor: default;
         }
 
-        /* Responsive Layout Rules */
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .nav-links {
-                justify-content: center;
-                margin-top: 15px;
-                padding: 0;
-            }
             .stats-bar {
                 flex-direction: column;
                 gap: 20px;
@@ -264,16 +214,16 @@
         <nav>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Us</a></li>
-                <li><a href="work.html">Our Work</a></li>
-                <li><a href="features.html">Features</a></li>
+                <li><a href="about us.html">About Us</a></li>
                 <li><a href="projects.html">Projects</a></li>
+                <li><a href="features.html">Features</a></li>
                 <li><a href="media.html">Media</a></li>
-                <li><a href="join-us.html">Join Us</a></li>
-                <li><a href="campaign.html">Campaign</a></li>
+                <li><a href="join us.html">Join Us</a></li>
+                <li><a href="compaign.html" style="color: #ff9f43; font-weight: bold;">Campaign</a></li>
                 <li><a href="donate.html">Donate</a></li>
                 <li><a href="blog.html">Blog</a></li>
-                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="contact us.html">Contact Us</a></li>
+                <li class="auth-nav-item"><a href="login.html" style="background:#198754; color:#fff; padding:6px 12px; border-radius:4px;">Login / Register</a></li>
             </ul>
         </nav>
     </header>
@@ -281,89 +231,142 @@
     <!-- Campaign Hero Section -->
     <section class="campaign-hero">
         <h1>Our Active Drives & Campaigns</h1>
-        <p>Small actions, when multiplied by thousands of people, can transform the world. Explore our active projects and find out how you can contribute.</p>
+        <p>Small actions, when multiplied by thousands of people, can transform the world. Explore our active projects and contribute directly to change.</p>
     </section>
 
     <!-- Real-time Impact Tracker -->
     <div class="stats-bar">
         <div class="stat-item">
-            <h3>12+</h3>
-            <p>Active Campaigns</p>
+            <h3 id="stat-campaigns">4 Active</h3>
+            <p>Community Campaigns</p>
         </div>
         <div class="stat-item">
-            <h3>$45K</h3>
-            <p>Funds Raised This Year</p>
+            <h3 id="stat-funds">₹65,000+</h3>
+            <p>Total Raised This Month</p>
         </div>
         <div class="stat-item">
-            <h3>5,000+</h3>
-            <p>Lives Impacted</p>
+            <h3 id="stat-lives">5,000+</h3>
+            <p>Beneficiaries Assisted</p>
         </div>
     </div>
 
     <!-- Main Content Container -->
     <main class="campaigns-container">
-        
         <!-- Section: Active Initiatives -->
-        <h2 class="section-title">Active Campaigns</h2>
+        <h2 class="section-title">Active Fundraising Campaigns</h2>
         <div class="campaign-grid">
             
             <!-- Campaign 1 -->
             <div class="campaign-card">
-                <div class="campaign-img" style="background-image: url('https://unsplash.com');">
+                <div class="campaign-img" style="background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80');">
                     <span class="badge">Live</span>
                 </div>
                 <div class="campaign-body">
-                    <h2>Books For Bright Futures</h2>
-                    <p>Help us pool resources to purchase and distribute updated textbooks, stationery, and backpacks to 500 children in local rural districts.</p>
+                    <h2>Books & Digital Learning for 500 Kids</h2>
+                    <p>Supplying updated syllabus textbooks, stationery sets, and solar tablet learning centers to girls in rural Maharashtra.</p>
                     <div class="progress-container">
                         <div class="progress-labels">
-                            <span>Raised: $3,200</span>
+                            <span>Raised: ₹35,000 of ₹50,000</span>
                             <span>70%</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 70%;"></div>
                         </div>
                     </div>
-                    <a href="donate.html" class="campaign-btn">Support Campaign</a>
+                    <a href="donate.html" class="campaign-btn">Support This Campaign</a>
                 </div>
             </div>
 
             <!-- Campaign 2 -->
             <div class="campaign-card">
-                <div class="campaign-img" style="background-image: url('https://unsplash.com');">
+                <div class="campaign-img" style="background-image: url('https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80');">
                     <span class="badge">Live</span>
                 </div>
                 <div class="campaign-body">
-                    <h2>Rural Health & Hygiene Camp</h2>
-                            <!-- Section: Completed Achievements -->
-        <h2 class="section-title">Completed Campaigns</h2>
-        <div class="campaign-grid">
-            
-            <!-- Campaign 3 -->
-            <div class="campaign-card">
-                <div class="campaign-img" style="background-image: url('https://unsplash.com');">
-                    <span class="badge completed">Successful</span>
-                </div>
-                <div class="campaign-body">
-                    <h2>Mission Green: 2025 Trees</h2>
-                    <p>Our environmental drive focused on community reforestation targets. Successfully planted over 2,500 trees in depleted suburban green zones.</p>
+                    <h2>Rural Health & Preventive Care Camp</h2>
+                    <p>Deploying mobile clinics with doctors and medical tests for cataract screenings, diabetic checks, and mother-child nutrition.</p>
                     <div class="progress-container">
                         <div class="progress-labels">
-                            <span>Goal Reached: $5,000</span>
-                            <span>100%</span>
+                            <span>Raised: ₹22,000 of ₹40,000</span>
+                            <span>55%</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 100%; background: #28a745;"></div>
+                            <div class="progress-fill" style="width: 55%;"></div>
                         </div>
                     </div>
-                    <a href="#" class="campaign-btn secondary">Campaign Concluded</a>
+                    <a href="donate.html" class="campaign-btn">Support This Campaign</a>
                 </div>
             </div>
 
-        </div> <!-- This tag closes .campaign-grid -->
+            <!-- Campaign 3 -->
+            <div class="campaign-card">
+                <div class="campaign-img" style="background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80');">
+                    <span class="badge">Live</span>
+                </div>
+                <div class="campaign-body">
+                    <h2>Daily Nutritional Meal Distribution</h2>
+                    <p>Supplying daily hot, hygienic meals to homeless elderly citizens and young children across urban slums.</p>
+                    <div class="progress-container">
+                        <div class="progress-labels">
+                            <span>Raised: ₹48,000 of ₹60,000</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <a href="donate.html" class="campaign-btn">Support This Campaign</a>
+                </div>
+            </div>
 
-    </main> <!-- This tag closes main -->
+        </div>
 
+        <!-- Section: Completed Achievements -->
+        <h2 class="section-title">Completed & Successful Campaigns</h2>
+        <div class="campaign-grid">
+            
+            <div class="campaign-card">
+                <div class="campaign-img" style="background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80');">
+                    <span class="badge completed">Concluded</span>
+                </div>
+                <div class="campaign-body">
+                    <h2>Mission Green: 2,500 Urban Trees</h2>
+                    <p>Community reforestation drive that planted 2,500 indigenous trees with 100% drip irrigation support.</p>
+                    <div class="progress-container">
+                        <div class="progress-labels">
+                            <span>Goal Achieved: ₹1,20,000</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%; background: #10b981;"></div>
+                        </div>
+                    </div>
+                    <span class="campaign-btn secondary">Target 100% Achieved</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" style="background:#1f3a52; color:white; padding:25px; text-align:center;">
+        &copy; 2026 Hope Hand NGO. Every contribution fuels life-changing campaigns.
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        async function updateLiveStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const stats = await res.json();
+                if (stats.totalDonations !== undefined) {
+                    document.getElementById('stat-funds').textContent = `₹${stats.totalDonations.toLocaleString()}`;
+                    document.getElementById('stat-lives').textContent = `${(stats.totalVolunteers * 50 + 5000).toLocaleString()}+`;
+                }
+            } catch (e) {
+                console.log('Stats sync unavailable:', e);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateLiveStats);
+    </script>
 </body>
 </html>
-

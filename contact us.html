@@ -3,223 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hope Hand NGO - Home</title>
+    <title>Contact Us - Hope Hand NGO</title>
     <style>
-        /* Simple layout rules for everyone */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #f4f6f7;
+            background-color: #f7f9fa;
             color: #333;
             line-height: 1.6;
         }
 
-        /* Top Menu Bar */
-        .menu-bar {
+        /* Navigation Bar */
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: #1f3a52;
             padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .logo {
             color: #fff;
             font-size: 24px;
             font-weight: bold;
+            letter-spacing: 1px;
         }
 
-        .menu-links {
+        .nav-links {
             display: flex;
             list-style: none;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .menu-links li {
-            margin-left: 20px;
+        .nav-links li {
+            margin-left: 15px;
+            margin-bottom: 5px;
         }
 
-        .menu-links a {
+        .nav-links a {
             color: #cbd5e1;
             text-decoration: none;
-            font-size: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
-        .menu-links a:hover, .menu-links .active {
+        .nav-links a:hover, .nav-links .active {
             color: #ff9f43;
             font-weight: bold;
         }
 
-        /* Large Welcome Section */
-        .welcome-section {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://unsplash.com') no-repeat center center/cover;
+        /* Hero Banner */
+        .contact-hero {
+            background: linear-gradient(rgba(31, 58, 82, 0.85), rgba(31, 58, 82, 0.85)), url('https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
             color: white;
-            padding: 80px 20px;
+            padding: 60px 20px;
             text-align: center;
         }
 
-        .welcome-section h1 {
-            font-size: 38px;
-            margin-bottom: 15px;
+        .contact-hero h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
         }
 
-        .welcome-section p {
-            font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto 25px auto;
+        .contact-hero p {
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #e2e8f0;
         }
 
-        .orange-button {
-            display: inline-block;
-            background-color: #ff9f43;
-            color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-
-        .orange-button:hover {
-            background-color: #e68a2e;
-        }
-
-        /* What We Do Section */
-        .content-box {
-            max-width: 1100px;
+        /* Main Content */
+        main {
+            max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            main { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; text-align: center; }
+            .nav-links { justify-content: center; margin-top: 15px; }
+        }
+
+        .page-section {
+            background: #fff;
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .section-title {
             color: #1f3a52;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .section-desc {
+            color: #666;
             margin-bottom: 25px;
-            font-size: 26px;
-            text-align: center;
+            font-size: 15px;
         }
 
-        .three-columns {
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        .card {
-            background: white;
+        @media (max-width: 550px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .contact-form input, .contact-form select, .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+            border-color: #1f3a52;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(31, 58, 82, 0.15);
+        }
+
+        .contact-form button {
+            background-color: #ff9f43;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background-color: #e68a2e;
+        }
+
+        /* Sidebar Info Cards */
+        .info-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #fff;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            text-align: center;
+            border-left: 5px solid #1f3a52;
         }
 
-        .card .emoji {
-            font-size: 40px;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .card h3 {
+        .info-card h3 {
             color: #1f3a52;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 18px;
         }
 
-        /* Project / Driving Help Section */
-        .project-box {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-top: 30px;
-        }
-
-        .progress-outside {
-            background: #e9ecef;
-            height: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-
-        .progress-inside {
-            background: #ff9f43;
-            height: 100%;
-            width: 70%; /* Explains how much is done */
+        .info-card p {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.6;
         }
 
         footer {
             background: #1f3a52;
             color: white;
             text-align: center;
-            padding: 15px;
-            margin-top: 40px;
+            padding: 20px;
+            margin-top: 50px;
             font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-            .menu-bar { flex-direction: column; text-align: center; }
-            .menu-links { margin-top: 15px; }
         }
     </style>
 </head>
 <body>
 
     <!-- Navigation Header -->
-    <header class="menu-bar">
+    <header class="navbar">
         <div class="logo">Hope Hand NGO</div>
         <nav>
-            <ul class="menu-links">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="contact-join.html">Join & Contact Us</a></li>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about us.html">About Us</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="features.html">Features</a></li>
+                <li><a href="media.html">Media</a></li>
+                <li><a href="join us.html">Join Us</a></li>
+                <li><a href="compaign.html">Campaign</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact us.html" class="active">Contact Us</a></li>
+                <li class="auth-nav-item"><a href="login.html" style="background:#198754; color:#fff; padding:6px 12px; border-radius:4px;">Login / Register</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Main Message Banner -->
-    <section class="welcome-section">
-        <h1>Help Us Make Life Better For Others</h1>
-        <p>We work hard every day to give free food, good school books, and basic healthcare to families who need it most.</p>
-        <a href="contact-join.html" class="orange-button">Come Help Us</a>
+    <!-- Hero Banner -->
+    <section class="contact-hero">
+        <h1>Get in Touch With Us</h1>
+        <p>Have questions about our initiatives, corporate partnerships, or donation receipts? Our team is here to assist you.</p>
     </section>
 
-    <!-- Our Main Work Areas -->
-    <main class="content-box">
-        <h2 class="section-title">How We Help the Community</h2>
-        
-        <div class="three-columns">
-            <div class="card">
-                <span class="emoji">🎒</span>
-                <h3>Free Education</h3>
-                <p>We give books, bags, and free school classes to children living in poor villages.</p>
-            </div>
-            <div class="card">
-                <span class="emoji">🍲</span>
-                <h3>Free Daily Meals</h3>
-                <p>We cook and deliver hot, healthy meals to people who do not have enough food.</p>
-            </div>
-            <div class="card">
-                <span class="emoji">🌱</span>
-                <h3>Planting Trees</h3>
-                <p>We plant green trees and clean up local neighborhoods to save nature.</p>
-            </div>
-        </div>
+    <!-- Main Content Area -->
+    <main>
+        <!-- Contact Form Section -->
+        <section class="page-section">
+            <h2 class="section-title">Send Us a Message</h2>
+            <p class="section-desc">Fill in your inquiry details below and our coordinator will respond within 24 hours.</p>
 
-        <!-- Current Project Status -->
-        <h2 class="section-title" style="margin-top: 50px;">Our Current Big Project</h2>
-        <div class="project-box">
-            <h3>New Books for 500 Poor Kids</h3>
-            <p>We are collecting money and school supplies to help children start school happily this term.</p>
-            
-            <div class="progress-outside">
-                <div class="progress-inside"></div>
+            <div id="contact-alert" style="display: none; padding: 14px; border-radius: 6px; margin-bottom: 20px; font-weight: 500;"></div>
+
+            <form id="contact-form" class="contact-form" onsubmit="handleContactSubmit(event)">
+                <div class="form-row">
+                    <input type="text" id="contact-name" placeholder="Your Full Name *" required>
+                    <input type="email" id="contact-email" placeholder="Your Email Address *" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" id="contact-phone" placeholder="Phone Number (Optional)">
+                    <select id="contact-subject">
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="CSR & Corporate Partnership">CSR & Corporate Partnership</option>
+                        <option value="Donation Receipt & 80G Certificate">Donation Receipt & 80G Certificate</option>
+                        <option value="Volunteer Programs">Volunteer Programs</option>
+                        <option value="Media & Press Inquiry">Media & Press Inquiry</option>
+                    </select>
+                </div>
+                <textarea id="contact-message" placeholder="Your Message or Inquiry Details *" rows="6" required></textarea>
+                <button type="submit" id="contact-btn">Send Message</button>
+            </form>
+        </section>
+
+        <!-- Sidebar Info -->
+        <aside class="info-sidebar">
+            <div class="info-card">
+                <h3>📍 Head Office</h3>
+                <p><strong>Udaan & Hope Hand Foundation</strong></p>
+                <p>124 Welfare Heights, Sector 4, Baner Road, Pune, Maharashtra - 411045</p>
             </div>
-            <p><strong>We have reached 70% of our goal!</strong> Thank you for your kindness.</p>
-        </div>
+
+            <div class="info-card" style="border-left-color: #ff9f43;">
+                <h3>📞 Call & Email</h3>
+                <p><strong>General Support:</strong> +91 98765 43210</p>
+                <p><strong>Email:</strong> contact@hopehand.org</p>
+                <p><strong>CSR Desk:</strong> csr@hopehand.org</p>
+            </div>
+
+            <div class="info-card">
+                <h3>⏰ Working Hours</h3>
+                <p><strong>Monday – Friday:</strong> 9:00 AM – 6:00 PM</p>
+                <p><strong>Saturday:</strong> 10:00 AM – 2:00 PM</p>
+                <p><strong>Sunday:</strong> Field volunteers on-duty</p>
+            </div>
+        </aside>
     </main>
 
-    <footer>&copy; 2026 Hope Hand NGO. Everyone can make a difference!</footer>
+    <footer>
+        &copy; 2026 Hope Hand NGO & Udaan Foundation. All rights reserved.
+    </footer>
 
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user) {
+                if (user.full_name) document.getElementById('contact-name').value = user.full_name;
+                if (user.email) document.getElementById('contact-email').value = user.email;
+            }
+        });
+
+        async function handleContactSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('contact-btn');
+            const alertBox = document.getElementById('contact-alert');
+
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById('contact-message').value.trim();
+
+            btn.disabled = true;
+            btn.textContent = 'Sending Message...';
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, subject, message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alertBox.style.display = 'block';
+                    alertBox.style.backgroundColor = '#d1fae5';
+                    alertBox.style.color = '#065f46';
+                    alertBox.style.border = '1px solid #a7f3d0';
+                    alertBox.innerHTML = `
+                        <strong>Message Sent!</strong> ${data.message}<br>
+                        <span style="font-size: 13px; color: #047857;">Inquiry ID: #${data.inquiry.id} | Subject: ${data.inquiry.subject}</span>
+                    `;
+                    showToast('Message sent successfully!');
+                    document.getElementById('contact-form').reset();
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.style.backgroundColor = '#fee2e2';
+                    alertBox.style.color = '#991b1b';
+                    alertBox.style.border = '1px solid #fecaca';
+                    alertBox.textContent = data.message || 'Error sending message.';
+                    showToast(data.message || 'Error sending message', 'error');
+                }
+            } catch (err) {
+                alertBox.style.display = 'block';
+                alertBox.style.backgroundColor = '#fee2e2';
+                alertBox.style.color = '#991b1b';
+                alertBox.style.border = '1px solid #fecaca';
+                alertBox.textContent = 'Network error sending inquiry to server.';
+                showToast('Network error connecting to backend', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+            }
+        }
+    </script>
 </body>
 </html>

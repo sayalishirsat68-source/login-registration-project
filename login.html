@@ -163,6 +163,7 @@
         </div>
     </main>
 
+    <script src="app.js"></script>
     <script>
         function fillDemo() {
             document.getElementById('email').value = 'admin@ngo.org';
@@ -195,9 +196,14 @@
                     alertBox.className = 'alert alert-success';
                     alertBox.innerHTML = `<strong>${data.message}</strong> Welcome, ${data.user.full_name} (${data.user.role}). Redirecting to Admin Dashboard...`;
                     alertBox.style.display = 'block';
+                    if (typeof loginUser === 'function') {
+                        loginUser(data.user);
+                    } else {
+                        localStorage.setItem('ngo_user', JSON.stringify(data.user));
+                    }
                     setTimeout(() => {
                         window.location.href = 'about us.html';
-                    }, 1500);
+                    }, 1200);
                 } else {
                     alertBox.className = 'alert alert-error';
                     alertBox.textContent = data.message || 'Login failed. Please verify credentials.';

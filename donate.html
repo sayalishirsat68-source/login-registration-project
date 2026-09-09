@@ -123,6 +123,9 @@
             <div class="donate-header">
                 <h1>Support Our Mission</h1>
                 <p>Every contribution directly funds education, nutritious meals, and rural healthcare.</p>
+                <div id="live-fund-stats" style="margin-top: 15px; display: inline-block; background: #e0f2fe; color: #0284c7; padding: 6px 16px; border-radius: 9999px; font-weight: 600; font-size: 14px;">
+                    Loading total funds raised...
+                </div>
             </div>
 
             <div class="form-group">
@@ -138,15 +141,15 @@
             <form id="donation-form" onsubmit="handleDonate(event)">
                 <div class="form-group">
                     <label for="custom-amount">Amount (₹)</label>
-                    <input type="number" id="custom-amount" value="1000" min="100" required>
+                    <input type="number" id="custom-amount" value="1000" min="50" required>
                 </div>
                 <div class="form-group">
                     <label for="cause">Direct My Donation To</label>
                     <select id="cause">
-                        <option value="education">Girls Education & Digital Classrooms</option>
-                        <option value="nutrition">Child Nutrition & Hot Meals Program</option>
-                        <option value="healthcare">Elderly Care & Medical Camps</option>
-                        <option value="general">Where Most Needed (General Fund)</option>
+                        <option value="Girls Education">Girls Education & Digital Classrooms</option>
+                        <option value="Child Nutrition">Child Nutrition & Hot Meals Program</option>
+                        <option value="Elderly Care">Elderly Care & Medical Camps</option>
+                        <option value="General Fund">Where Most Needed (General Fund)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -157,12 +160,12 @@
                     <label for="donor-email">Email for 80G Tax Receipt</label>
                     <input type="email" id="donor-email" required placeholder="name@example.com">
                 </div>
-                <button type="submit" class="donate-submit-btn">Proceed to Secure Donation</button>
+                <button type="submit" id="donate-submit-btn" class="donate-submit-btn">Proceed to Secure Donation</button>
             </form>
 
-            <div id="thank-you" style="display: none; margin-top: 25px; padding: 20px; background: #dcfce7; border-radius: 6px; text-align: center; color: #15803d;">
-                <h3>🎉 Thank you for your generous support!</h3>
-                <p style="margin-top: 6px;">Your donation receipt has been generated and emailed. Together we bring hope to communities in need.</p>
+            <div id="thank-you" style="display: none; margin-top: 25px; padding: 20px; background: #dcfce7; border-radius: 6px; text-align: center; color: #15803d; border: 1px solid #86efac;">
+                <h3 id="thank-you-title">🎉 Thank you for your generous support!</h3>
+                <p id="thank-you-desc" style="margin-top: 6px;">Your donation receipt has been generated. Together we bring hope to communities in need.</p>
             </div>
 
             <div class="impact-box">
@@ -177,9 +180,9 @@
     <footer class="footer">
         <div class="footer-column">
             <h4>Contact Us</h4>
-            <p>Address of the organization</p>
-            <p>Mobile: 7030637362</p>
-            <p>Email: sayalishirsat68@gmail.com</p>
+            <p>124 Welfare Heights, Baner Road, Pune</p>
+            <p>Mobile: +91 98765 43210</p>
+            <p>Email: contact@hopehand.org</p>
         </div>
         <div class="footer-column">
             <h4>Quick Links</h4>
@@ -198,6 +201,7 @@
         </div>
     </footer>
 
+    <script src="app.js"></script>
     <script>
         function selectAmount(val, elem) {
             document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('active'));
@@ -205,11 +209,64 @@
             document.getElementById('custom-amount').value = val;
         }
 
-        function handleDonate(e) {
+        async function loadDonationStats() {
+            try {
+                const res = await fetch('/api/donations');
+                const data = await res.json();
+                document.getElementById('live-fund-stats').innerHTML = `
+                    ❤️ Total Raised So Far: <strong>₹${data.totalAmount.toLocaleString()}</strong> across ${data.totalCount} donors
+                `;
+            } catch (e) {
+                document.getElementById('live-fund-stats').style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDonationStats();
+            const user = getCurrentUser();
+            if (user) {
+                if (user.full_name) document.getElementById('donor-name').value = user.full_name;
+                if (user.email) document.getElementById('donor-email').value = user.email;
+            }
+        });
+
+        async function handleDonate(e) {
             e.preventDefault();
-            const thankYou = document.getElementById('thank-you');
-            thankYou.style.display = 'block';
-            window.scrollTo({ top: thankYou.offsetTop - 50, behavior: 'smooth' });
+            const btn = document.getElementById('donate-submit-btn');
+            const donor_name = document.getElementById('donor-name').value.trim();
+            const donor_email = document.getElementById('donor-email').value.trim();
+            const amount = document.getElementById('custom-amount').value;
+            const cause = document.getElementById('cause').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Processing Donation...';
+
+            try {
+                const res = await fetch('/api/donations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ donor_name, donor_email, amount, cause })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    const thankYou = document.getElementById('thank-you');
+                    document.getElementById('thank-you-title').textContent = `🎉 Thank you, ${donor_name}!`;
+                    document.getElementById('thank-you-desc').innerHTML = `${data.message}<br><small>Transaction ID: #${data.donation.id} | Cause: ${data.donation.cause}</small>`;
+                    thankYou.style.display = 'block';
+                    window.scrollTo({ top: thankYou.offsetTop - 50, behavior: 'smooth' });
+                    showToast(`Donation of ₹${amount} received! Thank you!`);
+                    loadDonationStats();
+                } else {
+                    showToast(data.message || 'Donation failed', 'error');
+                }
+            } catch (err) {
+                showToast('Network error during donation processing', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Proceed to Secure Donation';
+            }
         }
     </script>
 </body>

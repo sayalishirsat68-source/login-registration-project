@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGO Projects & Impact</title>
+    <title>Our Projects - Hope Hand NGO</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         * {
             box-sizing: border-box;
@@ -12,44 +13,55 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #f4f6f9;
+            background-color: #f7f9fa;
             color: #333;
-            padding-bottom: 60px;
+            line-height: 1.6;
         }
+
         .header-section {
-            background-color: #0d616c;
+            background-color: #1f3a52;
             color: white;
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px 70px 20px;
         }
         .header-section h1 {
-            font-size: 32px;
+            font-size: 34px;
             margin-bottom: 8px;
         }
         .header-section p {
             font-size: 16px;
-            opacity: 0.9;
+            color: #cbd5e1;
         }
+
         .container {
             max-width: 1200px;
-            margin: -20px auto 0 auto;
+            margin: -40px auto 0 auto;
             background: white;
-            padding: 40px 30px;
+            padding: 35px 30px;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             position: relative;
         }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
         .filter-container {
             display: flex;
-            justify-content: center;
-            margin-bottom: 35px;
-            gap: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         .filter-btn {
             background-color: #e9ecef;
             border: none;
-            padding: 10px 20px;
-            font-size: 15px;
+            padding: 8px 18px;
+            font-size: 14px;
             font-weight: 600;
             border-radius: 20px;
             cursor: pointer;
@@ -57,9 +69,25 @@
             color: #495057;
         }
         .filter-btn.active, .filter-btn:hover {
-            background-color: #0d616c;
+            background-color: #1f3a52;
             color: white;
         }
+
+        .btn-add-project {
+            background-color: #ff9f43;
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-add-project:hover {
+            background-color: #e68a2e;
+        }
+
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -83,7 +111,7 @@
             width: 100%;
             height: 200px;
             object-fit: cover;
-            background-color: #ddd;
+            background-color: #cbd5e1;
         }
         .project-body {
             padding: 20px;
@@ -91,14 +119,18 @@
             display: flex;
             flex-direction: column;
         }
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
         .project-badge {
-            align-self: flex-start;
             font-size: 11px;
             text-transform: uppercase;
             font-weight: bold;
             padding: 4px 10px;
             border-radius: 12px;
-            margin-bottom: 12px;
         }
         .badge-ongoing { background-color: #ffeeba; color: #856404; }
         .badge-completed { background-color: #d4edda; color: #155724; }
@@ -106,41 +138,32 @@
         
         .project-title {
             font-size: 20px;
-            color: #222;
+            color: #1f3a52;
             margin-bottom: 10px;
         }
         .project-desc {
             font-size: 14px;
-            color: #666;
+            color: #555;
             line-height: 1.6;
             margin-bottom: 15px;
             flex-grow: 1;
         }
         .project-meta {
             font-size: 12px;
-            color: #888;
+            color: #777;
             border-top: 1px solid #eee;
             padding-top: 12px;
+            margin-top: 10px;
         }
-        .project-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: #0d616c;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .project-link:hover {
-            text-decoration: underline;
-        }
+
         .impact-title {
             text-align: center;
-            color: #0d616c;
+            color: #1f3a52;
             font-size: 26px;
             margin-bottom: 25px;
         }
         .impact-banner {
-            background-color: #0d616c;
+            background-color: #1f3a52;
             color: white;
             border-radius: 8px;
             padding: 30px;
@@ -150,124 +173,255 @@
             gap: 20px;
         }
         .impact-stat h3 {
-            font-size: 36px;
+            font-size: 34px;
             margin-bottom: 5px;
             font-weight: 700;
+            color: #ff9f43;
         }
         .impact-stat p {
             font-size: 15px;
-            opacity: 0.9;
+            color: #e2e8f0;
         }
         .empty-message {
             grid-column: 1 / -1;
             text-align: center;
             color: #888;
-            font-style: italic;
-            padding: 40px;
+            padding: 50px 20px;
         }
+
+        /* Add Project Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 8px;
+            max-width: 550px;
+            width: 100%;
+            padding: 30px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h3 {
+            color: #1f3a52;
+            font-size: 20px;
+        }
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #475569;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-submit-modal {
+            width: 100%;
+            background: #1f3a52;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-submit-modal:hover {
+            background: #ff9f43;
+        }
+
         @media(max-width: 768px) {
             .impact-banner {
                 grid-template-columns: 1fr;
-                gap: 30px;
+                gap: 25px;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header and Navigation -->
+    <header class="navbar">
+        <div class="logo">Hope Hand NGO</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about us.html">About Us</a></li>
+                <li><a href="projects.html" class="active">Projects</a></li>
+                <li><a href="features.html">Features</a></li>
+                <li><a href="media.html">Media</a></li>
+                <li><a href="join us.html">Join Us</a></li>
+                <li><a href="compaign.html">Campaign</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact us.html">Contact Us</a></li>
+                <li class="auth-nav-item"><a href="login.html" style="background:#198754; color:#fff; padding:6px 12px; border-radius:4px;">Login / Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="header-section">
-        <h1>Our Projects</h1>
-        <p>Making a difference through our initiatives</p>
+        <h1>Our Humanitarian Projects</h1>
+        <p>Creating sustainable impact through targeted grassroots initiatives across communities</p>
     </div>
 
     <div class="container">
-        <!-- स्टेटस फ़िल्टर बटन्स -->
-        <div class="filter-container">
-            <button class="filter-btn active" onclick="filterProjects('all', this)">All Projects</button>
-            <button class="filter-btn" onclick="filterProjects('Ongoing', this)">Ongoing</button>
-            <button class="filter-btn" onclick="filterProjects('Completed', this)">Completed</button>
-            <button class="filter-btn" onclick="filterProjects('Upcoming', this)">Upcoming</button>
+        <!-- Filter & Action Bar -->
+        <div class="actions-bar">
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterProjects('all', this)">All Projects</button>
+                <button class="filter-btn" onclick="filterProjects('Ongoing', this)">Ongoing</button>
+                <button class="filter-btn" onclick="filterProjects('Completed', this)">Completed</button>
+                <button class="filter-btn" onclick="filterProjects('Upcoming', this)">Upcoming</button>
+            </div>
+            <button class="btn-add-project" onclick="openAddProjectModal()">+ Add New Project</button>
         </div>
 
-        <!-- प्रोजेक्ट्स ग्रिड कंटेनर -->
-        <div id="projectsContainer" class="projects-grid"></div>
+        <!-- Projects Grid -->
+        <div id="projectsContainer" class="projects-grid">
+            <p style="grid-column: 1/-1; text-align: center; color: #64748b;">Loading projects from server...</p>
+        </div>
 
-        <!-- इम्पैक्ट बैनर सेक्शन -->
-        <h2 class="impact-title">Our Impact</h2>
+        <!-- Impact Statistics -->
+        <h2 class="impact-title">Our Collective Impact</h2>
         <div class="impact-banner">
             <div class="impact-stat">
-                <h3>500+</h3>
-                <p>People Helped</p>
+                <h3 id="stat-people">12,500+</h3>
+                <p>Beneficiaries Reached</p>
             </div>
             <div class="impact-stat">
-                <h3>300+</h3>
-                <p>Volunteers Engaged</p>
+                <h3 id="stat-volunteers">350+</h3>
+                <p>Active Volunteers</p>
             </div>
             <div class="impact-stat">
-                <h3>$50,000+</h3>
-                <p>Funds Raised</p>
+                <h3 id="stat-projects">0</h3>
+                <p>Community Projects Managed</p>
             </div>
         </div>
     </div>
 
-    <script>
-        let allProjects = [];
+    <!-- Add Project Modal -->
+    <div id="addProjectModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Add New Project</h3>
+                <button class="btn-close" onclick="closeAddProjectModal()">&times;</button>
+            </div>
+            <form id="project-form" onsubmit="handleCreateProject(event)">
+                <div class="form-group">
+                    <label>Project Title *</label>
+                    <input type="text" id="new-proj-title" required placeholder="e.g. Village Solar Energy Initiative">
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="new-proj-status">
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location *</label>
+                    <input type="text" id="new-proj-location" required placeholder="e.g. Baner Rural Sector, Pune">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="new-proj-start">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="new-proj-end">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Banner Image URL</label>
+                    <input type="url" id="new-proj-img" placeholder="https://images.unsplash.com/photo-...">
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="new-proj-desc" rows="3" required placeholder="Details about this initiative..."></textarea>
+                </div>
+                <button type="submit" id="proj-submit-btn" class="btn-submit-modal">Save & Publish Project</button>
+            </form>
+        </div>
+    </div>
 
-        function loadProjectsData() {
-            allProjects = JSON.parse(localStorage.getItem('ngoProjects')) || [
-                {
-                    id: 1,
-                    title: "Project Title 1",
-                    description: "A short description of the project. Providing educational support and learning kits.",
-                    status: "Ongoing",
-                    startDate: "2026-01-10",
-                    endDate: "2026-08-15",
-                    location: "Community Center Alpha",
-                    imageUrl: "https://unsplash.com"
-                },
-                {
-                    id: 2,
-                    title: "Project Title 2",
-                    description: "A short description of the project. Clean water installation program setup.",
-                    status: "Completed",
-                    startDate: "2025-03-01",
-                    endDate: "2025-11-20",
-                    location: "Rural Sector South",
-                    imageUrl: "https://unsplash.com"
-                },
-                {
-                    id: 3,
-                    title: "Project Title 3",
-                    description: "A short description of the project. Upcoming health and nutrition wellness drive.",
-                    status: "Upcoming",
-                    startDate: "2026-10-01",
-                    endDate: "2027-02-28",
-                    location: "Metro Suburbs",
-                    imageUrl: "https://unsplash.com"
-                }
-            ];
-            renderProjectsGrid(allProjects);
+    <footer class="footer" style="background:#1f3a52; color:white; padding:25px; text-align:center; margin-top:50px;">
+        &copy; 2026 Hope Hand NGO. Every project brings life and dignity to those in need.
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        let projectsState = [];
+        let currentFilter = 'all';
+
+        async function loadProjects() {
+            try {
+                const res = await fetch('/api/projects');
+                const data = await res.json();
+                projectsState = data.projects || [];
+                renderProjectsGrid(projectsState);
+                document.getElementById('stat-projects').textContent = projectsState.length;
+            } catch (err) {
+                document.getElementById('projectsContainer').innerHTML = `
+                    <div class="empty-message">Error connecting to server. Please ensure the backend is running.</div>
+                `;
+            }
         }
 
         function renderProjectsGrid(projectsList) {
             const container = document.getElementById('projectsContainer');
-            if(projectsList.length === 0) {
-                container.innerHTML = '<div class="empty-message">No matching projects found under this classification filter.</div>';
+            if (!projectsList || projectsList.length === 0) {
+                container.innerHTML = '<div class="empty-message">No matching projects found.</div>';
                 return;
             }
 
             container.innerHTML = projectsList.map(project => `
                 <div class="project-card">
-                    <img class="project-img" src="${project.imageUrl || 'https://placeholder.com'}" alt="${project.title}">
+                    <img class="project-img" src="${project.imageUrl || 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=600&q=80'}" alt="${project.title}" onerror="this.src='https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500'">
                     <div class="project-body">
-                        <span class="project-badge badge-${project.status.toLowerCase()}">${project.status}</span>
+                        <div class="card-top">
+                            <span class="project-badge badge-${(project.status || 'ongoing').toLowerCase()}">${project.status || 'Ongoing'}</span>
+                            <button onclick="handleDeleteProject(${project.id})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">Delete</button>
+                        </div>
                         <h3 class="project-title">${project.title}</h3>
                         <p class="project-desc">${project.description}</p>
                         <div class="project-meta">
-                            <div><strong>Location:</strong> ${project.location}</div>
-                            <div><strong>Timeline:</strong> ${project.startDate} to ${project.endDate || 'Present'}</div>
+                            <div>📍 <strong>Location:</strong> ${project.location || 'Maharashtra'}</div>
+                            <div>🗓️ <strong>Timeline:</strong> ${project.startDate || '2026'} &ndash; ${project.endDate || 'Present'}</div>
                         </div>
-                        <div><a href="#" class="project-link">Learn More</a></div>
                     </div>
                 </div>
             `).join('');
@@ -276,17 +430,79 @@
         function filterProjects(status, element) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
+            currentFilter = status;
 
-            if(status === 'all') {
-                renderProjectsGrid(allProjects);
+            if (status === 'all') {
+                renderProjectsGrid(projectsState);
             } else {
-                const filtered = allProjects.filter(p => p.status === status);
+                const filtered = projectsState.filter(p => (p.status || '').toLowerCase() === status.toLowerCase());
                 renderProjectsGrid(filtered);
             }
         }
 
-        window.onload = loadProjectsData;
+        function openAddProjectModal() {
+            document.getElementById('addProjectModal').style.display = 'flex';
+        }
+
+        function closeAddProjectModal() {
+            document.getElementById('addProjectModal').style.display = 'none';
+        }
+
+        async function handleCreateProject(e) {
+            e.preventDefault();
+            const btn = document.getElementById('proj-submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const payload = {
+                title: document.getElementById('new-proj-title').value.trim(),
+                status: document.getElementById('new-proj-status').value,
+                location: document.getElementById('new-proj-location').value.trim(),
+                startDate: document.getElementById('new-proj-start').value || '2026-01-01',
+                endDate: document.getElementById('new-proj-end').value || 'Present',
+                imageUrl: document.getElementById('new-proj-img').value.trim() || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600',
+                description: document.getElementById('new-proj-desc').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast('New project created successfully!');
+                    closeAddProjectModal();
+                    document.getElementById('project-form').reset();
+                    loadProjects();
+                } else {
+                    showToast(data.message || 'Error creating project', 'error');
+                }
+            } catch (err) {
+                showToast('Network error creating project', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save & Publish Project';
+            }
+        }
+
+        async function handleDeleteProject(id) {
+            if (!confirm('Are you sure you want to remove this project?')) return;
+            try {
+                const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    showToast('Project removed');
+                    loadProjects();
+                }
+            } catch (e) {
+                showToast('Error removing project', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProjects();
+        });
     </script>
 </body>
 </html>
-
