@@ -1,0 +1,6 @@
+{
+  "name": "NGO Foundation Portal",
+  "description": "NGO platform featuring community campaigns, initiatives, admin media management, and user registration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

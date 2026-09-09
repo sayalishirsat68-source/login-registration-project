@@ -1,0 +1,15 @@
+{
+  "name": "login-registration-project",
+  "version": "1.0.0",
+  "description": "NGO web portal with login and registration system",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node -e \"console.log('Build successful')\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.2.1"
+  }
+}

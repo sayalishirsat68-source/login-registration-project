@@ -1,1 +1,165 @@
-b
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog & Stories | NGO Foundation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .blog-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .blog-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .blog-header h1 {
+            color: #1f3a52;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .blog-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .blog-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .blog-card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .blog-card-body {
+            padding: 20px;
+        }
+        .blog-date {
+            font-size: 12px;
+            color: #198754;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .blog-card-title {
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .blog-card-desc {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .read-more-btn {
+            color: #198754;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header and Navigation -->
+    <header class="navbar">
+        <div class="logo">NGO Logo</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about us.html">About Us</a></li>
+                <li><a href="features.html">Features</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="media.html">Media</a></li>
+                <li><a href="join us.html">Join Us</a></li>
+                <li><a href="compaign.html">Campaign</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="contact us.html">Contact Us</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="blog-container">
+        <div class="blog-header">
+            <h1>Field Stories & Updates</h1>
+            <p>Read about our grassroots interventions, volunteer journeys, and community transformation stories.</p>
+        </div>
+
+        <div class="blog-grid">
+            <article class="blog-card">
+                <img class="blog-card-img" src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80" alt="Education Drive">
+                <div class="blog-card-body">
+                    <div class="blog-date">March 2026 • Education</div>
+                    <h2 class="blog-card-title">Equipping 1,200 Girls With Digital Classrooms</h2>
+                    <p class="blog-card-desc">Through our latest educational initiative, young students across 15 government schools received solar-powered tablet computers and learning software.</p>
+                    <a href="compaign.html" class="read-more-btn">Read full story →</a>
+                </div>
+            </article>
+
+            <article class="blog-card">
+                <img class="blog-card-img" src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80" alt="Nutritional Care">
+                <div class="blog-card-body">
+                    <div class="blog-date">February 2026 • Nutrition</div>
+                    <h2 class="blog-card-title">Crossing 50,000 Nutritious Meals Served</h2>
+                    <p class="blog-card-desc">Our community kitchens have scaled daily hot meal distribution to ensure that no child attends evening tutoring on an empty stomach.</p>
+                    <a href="compaign.html" class="read-more-btn">Read full story →</a>
+                </div>
+            </article>
+
+            <article class="blog-card">
+                <img class="blog-card-img" src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=600&q=80" alt="Elder Care">
+                <div class="blog-card-body">
+                    <div class="blog-date">January 2026 • Community Care</div>
+                    <h2 class="blog-card-title">Manav Kartavya: Reaching Out to Isolated Seniors</h2>
+                    <p class="blog-card-desc">Volunteers visited over 400 elderly residents to provide free eye screenings, mobility aids, warm clothing, and healthcare checkups.</p>
+                    <a href="compaign.html" class="read-more-btn">Read full story →</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-column">
+            <h4>Contact Us</h4>
+            <p>Address of the organization</p>
+            <p>Mobile: 7030637362</p>
+            <p>Email: sayalishirsat68@gmail.com</p>
+        </div>
+        <div class="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about us.html">About</a></li>
+                <li><a href="contact us.html">Contact</a></li>
+                <li><a href="media.html">Media</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Social Connect</h4>
+            <p><a href="#">Facebook</a></p>
+            <p><a href="#">LinkedIn</a></p>
+            <p><a href="#">Twitter</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | NGO Foundation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            max-width: 480px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 35px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .auth-title {
+            text-align: center;
+            color: #1f3a52;
+            margin-bottom: 8px;
+            font-size: 26px;
+        }
+        .auth-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #218739;
+        }
+        .auth-btn {
+            width: 100%;
+            background-color: #218739;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .auth-btn:hover {
+            background-color: #198754;
+        }
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+        }
+        .auth-footer a {
+            color: #218739;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            display: none;
+        }
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header and Navigation -->
+    <header class="navbar">
+        <div class="logo">NGO Logo</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about us.html">About Us</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="media.html">Media</a></li>
+                <li><a href="join us.html">Join Us</a></li>
+                <li><a href="compaign.html">Campaign</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact us.html">Contact Us</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="auth-container">
+            <h1 class="auth-title">Create an Account</h1>
+            <p class="auth-subtitle">Join the NGO platform to volunteer, donate, or manage initiatives</p>
+
+            <div id="alert-box" class="alert"></div>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" required placeholder="e.g. Priya Sharma">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                </div>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="Volunteer">Volunteer</option>
+                        <option value="Donor">Donor</option>
+                        <option value="Member">Member</option>
+                        <option value="Admin">Administrator</option>
+                    </select>
+                </div>
+                <button type="submit" class="auth-btn" id="submit-btn">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                Already registered? <a href="login.html">Log in here</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('register-form');
+        const alertBox = document.getElementById('alert-box');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+
+            const full_name = document.getElementById('full_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full_name, email, password, role })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alertBox.className = 'alert alert-success';
+                    alertBox.innerHTML = `<strong>${data.message}</strong> Account created for ${data.user.full_name}. Redirecting to login...`;
+                    alertBox.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                } else {
+                    alertBox.className = 'alert alert-error';
+                    alertBox.textContent = data.message || 'Registration failed. Please check your details.';
+                    alertBox.style.display = 'block';
+                }
+            } catch (err) {
+                alertBox.className = 'alert alert-error';
+                alertBox.textContent = 'Unable to connect to server. Please try again.';
+                alertBox.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        });
+    </script>
+
+</body>
+</html>
