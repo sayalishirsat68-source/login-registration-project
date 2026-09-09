@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO - About Us & Admin Dashboard</title>
+
+      <style>
+        /* about us/*
+/* =========================================
+   GLOBAL STYLING
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f8fafc;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   VIEW SWITCHER
+========================================= */
+
+.view-switcher {
+    background-color: #0f172a;
+    padding: 16px;
+    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.view-switcher button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#btn-frontend {
+    background-color: #2563eb;
+}
+
+#btn-backend {
+    background-color: #374151;
+}
+
+#btn-frontend:hover {
+    background-color: #1d4ed8;
+}
+
+#btn-backend:hover {
+    background-color: #4b5563;
+}
+
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+#frontend-view,
+#backend-view {
+    width: 90%;
+    max-width: 1000px;
+
+    margin: 40px auto;
+
+    background-color: #ffffff;
+
+    padding: 32px;
+
+    border-radius: 10px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================
+   FRONTEND HERO
+========================================= */
+
+#frontend-view > header {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: white;
+
+    padding: 40px 20px;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    margin-bottom: 40px;
+}
+
+#frontend-view > header h1 {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   FRONTEND SECTIONS
+========================================= */
+
+#frontend-view section {
+    margin-bottom: 40px;
+}
+
+#frontend-view section h2 {
+    color: #2563eb;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    border-bottom: 2px solid #e5e7eb;
+
+    padding-bottom: 10px;
+
+    margin-bottom: 18px;
+}
+
+#frontend-view section p {
+    color: #4b5563;
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================
+   STORY SECTION
+========================================= */
+
+#frontend-view section:nth-of-type(2) > div {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+#frontend-view section:nth-of-type(2) p {
+    flex: 1;
+}
+
+#frontend-view section:nth-of-type(2) > div > div {
+    width: 33%;
+    min-height: 160px;
+
+    background-color: #e5e7eb;
+
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #9ca3af;
+
+    text-align: center;
+}
+
+
+/* =========================================
+   LISTS
+========================================= */
+
+#frontend-view ul {
+    padding-left: 25px;
+}
+
+#frontend-view li {
+    margin-bottom: 10px;
+
+    color: #4b5563;
+}
+
+#frontend-view li strong {
+    color: #1f2937;
+}
+
+
+/* =========================================
+   TEAM CARDS
+========================================= */
+
+#frontend-view section:last-child > div {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+}
+
+#frontend-view section:last-child > div > div {
+    padding: 20px;
+
+    background-color: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 8px;
+
+    transition: 0.3s ease;
+}
+
+#frontend-view section:last-child > div > div:hover {
+    transform: translateY(-3px);
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+#frontend-view section:last-child h3 {
+    color: #1f2937;
+
+    font-size: 18px;
+
+    margin-bottom: 5px;
+}
+
+
+/* =========================================
+   ADMIN DASHBOARD
+========================================= */
+
+#backend-view > header {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: white;
+
+    padding: 25px;
+
+    border-radius: 8px;
+
+    margin-bottom: 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#backend-view > header h1 {
+    font-size: 26px;
+}
+
+#backend-view > header p {
+    color: #dbeafe;
+
+    font-size: 13px;
+}
+
+#backend-view > header span {
+    background-color: #1d4ed8;
+
+    padding: 7px 14px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   ADMIN SECTIONS
+========================================= */
+
+#backend-view section {
+    background-color: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 8px;
+
+    padding: 25px;
+
+    margin-bottom: 30px;
+}
+
+#backend-view section h2 {
+    font-size: 19px;
+
+    color: #1f2937;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   LABELS
+========================================= */
+
+#backend-view label {
+    display: block;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    color: #6b7280;
+
+    margin-bottom: 6px;
+}
+
+
+/* =========================================
+   INPUTS
+========================================= */
+
+#backend-view input,
+#backend-view textarea {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 6px;
+
+    background-color: white;
+
+    font-size: 14px;
+
+    color: #374151;
+
+    outline: none;
+
+    transition: 0.3s ease;
+}
+
+#backend-view input:focus,
+#backend-view textarea:focus {
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+#backend-view textarea {
+    resize: vertical;
+}
+
+
+/* =========================================
+   ADMIN BUTTONS
+========================================= */
+
+#backend-view button {
+    border: none;
+
+    padding: 9px 15px;
+
+    border-radius: 6px;
+
+    color: white;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+}
+
+
+/* Update */
+
+#backend-view button.bg-yellow-500 {
+    background-color: #eab308;
+}
+
+#backend-view button.bg-yellow-500:hover {
+    background-color: #ca8a04;
+}
+
+
+/* Delete */
+
+#backend-view button.bg-red-600 {
+    background-color: #dc2626;
+}
+
+#backend-view button.bg-red-600:hover {
+    background-color: #b91c1c;
+}
+
+
+/* Add */
+
+#backend-view button.bg-green-600 {
+    background-color: #16a34a;
+}
+
+#backend-view button.bg-green-600:hover {
+    background-color: #15803d;
+}
+
+
+/* =========================================
+   CORE VALUE / PROGRAM ROW
+========================================= */
+
+#backend-view section .flex.items-center {
+    background-color: white;
+
+    padding: 12px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 6px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 10px;
+}
+
+#backend-view section .flex.items-center input {
+    flex: 1;
+}
+
+
+/* =========================================
+   TEAM ADMIN CARDS
+========================================= */
+
+#backend-view section .bg-white {
+    background-color: white;
+
+    padding: 18px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 8px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+#backend-view footer {
+    border-top: 1px solid #e5e7eb;
+
+    padding-top: 20px;
+
+    text-align: center;
+
+    color: #9ca3af;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   HIDDEN CLASS
+========================================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 768px) {
+
+    #frontend-view,
+    #backend-view {
+        width: 95%;
+
+        padding: 20px;
+
+        margin: 20px auto;
+    }
+
+
+    /* Hero */
+
+    #frontend-view > header h1 {
+        font-size: 25px;
+    }
+
+
+    /* Story */
+
+    #frontend-view section:nth-of-type(2) > div {
+        flex-direction: column;
+    }
+
+    #frontend-view section:nth-of-type(2) > div > div {
+        width: 100%;
+    }
+
+
+    /* Team */
+
+    #frontend-view section:last-child > div {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* Admin Header */
+
+    #backend-view > header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    /* Admin rows */
+
+    #backend-view section .flex.items-center {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    /* View switcher */
+
+    .view-switcher {
+        flex-direction: column;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+    #frontend-view,
+    #backend-view {
+        width: 100%;
+
+        border-radius: 0;
+
+        padding: 15px;
+    }
+
+    #frontend-view > header {
+        padding: 30px 15px;
+    }
+
+    #frontend-view > header h1 {
+        font-size: 22px;
+    }
+
+    #backend-view > header h1 {
+        font-size: 21px;
+    }
+
+    #backend-view section {
+        padding: 18px;
+    }
+
+}
+
+      </style>
+    <!-- Tailwind CSS for modern styling -->
+
+    <script src="https://tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- View Switcher (For Preview Purposes Only) -->
+    <div class="bg-slate-900 p-4 text-center text-white flex justify-center gap-4 sticky top-0 z-50 shadow-md">
+        <button onclick="switchView('frontend')" id="btn-frontend" class="px-4 py-2 bg-blue-600 rounded font-semibold text-sm transition">👁️ View Public Website</button>
+        <button onclick="switchView('backend')" id="btn-backend" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold text-sm transition">⚙️ View Admin Dashboard</button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- FRONTEND: ABOUT US PAGE -->
+    <!-- ================================================================= -->
+    <main id="frontend-view" class="max-w-4xl mx-auto my-10 bg-white p-8 shadow-sm rounded-lg border border-gray-100">
+        
+        <!-- Welcome Hero Banner -->
+        <header class="bg-blue-600 text-white p-8 rounded-lg text-center mb-10">
+            <h1 class="text-3xl font-bold tracking-wide">Welcome to Udaan Foundation</h1>
+        </header>
+
+        <!-- Our Mission and Vision -->
+        <section class="mb-10">
+            <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Mission and Vision</h2>
+            <p class="text-gray-600 leading-relaxed">
+                Our mission is to empower communities, promote sustainable development, and uplift underrepresented populations. We envision a world where every individual has access to equal opportunities, basic healthcare, quality education, and a dignified life.
+            </p>
+        </section>
+
+        <!-- Our Story -->
+        <section class="mb-10">
+            <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Story</h2>
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+                <p class="text-gray-600 leading-relaxed flex-1">
+                    Founded in 2015, our journey started with a small group of passionate volunteers addressing local community issues. Over the years, we have grown into a fully dedicated NGO, reaching thousands of individuals across multiple regions and driving lasting social change.
+                </p>
+                <div class="w-full md:w-1/3 bg-gray-200 h-40 rounded flex items-center justify-center text-gray-400 font-medium">
+                    [ Story Image Placeholder ]
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Core Values -->
+        <section class="mb-10">
+            <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Core Values</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong class="text-gray-800">Integrity:</strong> Operating transparently and responsibly in all actions.</li>
+                <li><strong class="text-gray-800">Respect:</strong> Valuing the diversity and dignity of every individual.</li>
+                <li><strong class="text-gray-800">Empathy:</strong> Understanding and addressing the challenges faced by our communities.</li>
+            </ul>
+        </section>
+
+        <!-- Our Programs -->
+        <section class="mb-10">
+            <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Our Programs</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong class="text-gray-800">Education & Child Support:</strong> Providing school supplies, scholarships, and free tutoring.</li>
+                <li><strong class="text-gray-800">Health & Nutrition:</strong> Organizing regular free health checkup camps and clean water distribution.</li>
+                <li><strong class="text-gray-800">Welfare & Development:</strong> Offering skill development and vocational training for women.</li>
+            </ul>
+        </section>
+
+        <!-- Meet Our Team -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-blue-600 border-b pb-2 mb-4">Meet Our Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 bg-gray-50 rounded border border-gray-200">
+                    <h3 class="font-bold text-gray-800">John Doe</h3>
+                    <p class="text-sm text-blue-600 font-medium mb-2">Founder & Executive Director</p>
+                    <p class="text-sm text-gray-600">John has over 12 years of experience managing non-profit organizations and overseeing community welfare projects globally.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded border border-gray-200">
+                    <h3 class="font-bold text-gray-800">Jane Smith</h3>
+                    <p class="text-sm text-blue-600 font-medium mb-2">Program Coordinator</p>
+                    <p class="text-sm text-gray-600">Jane coordinates field operations, ensuring all resources reach the targeted communities efficiently.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- ================================================================= -->
+    <!-- BACKEND: ADMIN DASHBOARD -->
+    <!-- ================================================================= -->
+    <main id="backend-view" class="hidden max-w-4xl mx-auto my-10 bg-white p-8 shadow-sm rounded-lg border border-gray-100">
+        
+        <!-- Admin Dashboard Banner -->
+        <header class="bg-blue-600 text-white p-6 rounded-lg mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold tracking-wide">Admin Dashboard</h1>
+                <p class="text-xs text-blue-100 mt-1">Manage all text and imagery content for your About Us page</p>
+            </div>
+            <span class="text-xs bg-blue-700 px-3 py-1.5 rounded-full font-medium">Logged in as Admin</span>
+        </header>
+
+        <!-- Section: Our Story -->
+        <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                <span>Edit Our Story Section</span>
+                <span class="text-xs text-gray-400 font-normal">Section Reference</span>
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Story Content Text</label>
+                    <textarea rows="4" class="w-full p-2.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">Founded in 2015, our journey started with a small group of passionate volunteers addressing local community issues. Over the years, we have grown into a fully dedicated NGO, reaching thousands of individuals across multiple regions and driving lasting social change.</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Story Section Image</label>
+                    <input type="file" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                </div>
+                <div class="flex gap-2 justify-end pt-2">
+                    <button class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded transition">UPDATE STORY</button>
+                    <button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded transition">DELETE CONTENT</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Core Values -->
+        <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Edit Core Values</h2>
+            
+            <div class="space-y-3 mb-6">
+                <!-- Row 1 -->
+                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
+                    <input type="text" value="Integrity" class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium" readonly>
+                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
+                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
+                </div>
+                <!-- Row 2 -->
+                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
+                    <input type="text" value="Respect" class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium" readonly>
+                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">UPDATE</button>
+                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">DELETE</button>
+                </div>
+            </div>
+
+            <!-- Add Core Value Form -->
+            <div class="border-t pt-4">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Add New Value Name</label>
+                <div class="flex gap-2">
+                    <input type="text" placeholder="e.g. Accountability" class="flex-1 p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+
+                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">
+                        ADD VALUE
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Programs -->
+        <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+
+            <h2 class="text-lg font-bold text-gray-800 mb-4">
+                Edit Our Programs
+            </h2>
+
+            <div class="space-y-3">
+
+                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
+                    <input
+                        type="text"
+                        value="Education & Child Support"
+                        class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium"
+                        readonly>
+
+                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
+                        UPDATE
+                    </button>
+
+                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
+                        DELETE
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
+                    <input
+                        type="text"
+                        value="Health & Nutrition"
+                        class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium"
+                        readonly>
+
+                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
+                        UPDATE
+                    </button>
+
+                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
+                        DELETE
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 bg-white p-3 border border-gray-200 rounded">
+                    <input
+                        type="text"
+                        value="Welfare & Development"
+                        class="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50 font-medium"
+                        readonly>
+
+                    <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
+                        UPDATE
+                    </button>
+
+                    <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
+                        DELETE
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Add Program -->
+            <div class="border-t mt-6 pt-4">
+
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
+                    Add New Program
+                </label>
+
+                <div class="flex gap-2">
+
+                    <input
+                        type="text"
+                        placeholder="e.g. Women Empowerment"
+                        class="flex-1 p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+
+                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">
+                        ADD PROGRAM
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Section: Team -->
+        <section class="mb-8 border border-gray-200 rounded-lg p-6 bg-slate-50">
+
+            <h2 class="text-lg font-bold text-gray-800 mb-4">
+                Edit Our Team
+            </h2>
+
+            <div class="space-y-4">
+
+                <div class="bg-white p-4 border border-gray-200 rounded">
+
+                    <input
+                        type="text"
+                        value="John Doe"
+                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
+
+                    <input
+                        type="text"
+                        value="Founder & Executive Director"
+                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
+
+                    <textarea
+                        rows="3"
+                        class="w-full p-2 text-sm border border-gray-300 rounded">John has over 12 years of experience managing non-profit organizations and overseeing community welfare projects globally.</textarea>
+
+                    <div class="flex gap-2 justify-end mt-3">
+
+                        <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
+                            UPDATE
+                        </button>
+
+                        <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
+                            DELETE
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="bg-white p-4 border border-gray-200 rounded">
+
+                    <input
+                        type="text"
+                        value="Jane Smith"
+                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
+
+                    <input
+                        type="text"
+                        value="Program Coordinator"
+                        class="w-full p-2 mb-2 text-sm border border-gray-300 rounded">
+
+                    <textarea
+                        rows="3"
+                        class="w-full p-2 text-sm border border-gray-300 rounded">Jane coordinates field operations, ensuring all resources reach the targeted communities efficiently.</textarea>
+
+                    <div class="flex gap-2 justify-end mt-3">
+
+                        <button class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded">
+                            UPDATE
+                        </button>
+
+                        <button class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded">
+                            DELETE
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Add Team Member -->
+            <div class="border-t mt-6 pt-4">
+
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
+                    Add New Team Member
+                </label>
+
+                <div class="space-y-2">
+
+                    <input
+                        type="text"
+                        placeholder="Name"
+                        class="w-full p-2 text-sm border border-gray-300 rounded">
+
+                    <input
+                        type="text"
+                        placeholder="Designation"
+                        class="w-full p-2 text-sm border border-gray-300 rounded">
+
+                    <textarea
+                        rows="3"
+                        placeholder="Description"
+                        class="w-full p-2 text-sm border border-gray-300 rounded"></textarea>
+
+                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">
+                        ADD TEAM MEMBER
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Dashboard Footer -->
+        <footer class="border-t pt-6 text-center">
+
+            <p class="text-xs text-gray-400">
+                NGO Admin Dashboard
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- JavaScript -->
+    <script>
+
+        function switchView(view) {
+
+            const frontend = document.getElementById("frontend-view");
+            const backend = document.getElementById("backend-view");
+
+            const frontendButton = document.getElementById("btn-frontend");
+            const backendButton = document.getElementById("btn-backend");
+
+            if (view === "frontend") {
+
+                frontend.classList.remove("hidden");
+                backend.classList.add("hidden");
+
+                frontendButton.classList.remove("bg-gray-700");
+                frontendButton.classList.add("bg-blue-600");
+
+                backendButton.classList.remove("bg-blue-600");
+                backendButton.classList.add("bg-gray-700");
+
+            } else {
+
+                backend.classList.remove("hidden");
+                frontend.classList.add("hidden");
+
+                backendButton.classList.remove("bg-gray-700");
+                backendButton.classList.add("bg-blue-600");
+
+                frontendButton.classList.remove("bg-blue-600");
+                frontendButton.classList.add("bg-gray-700");
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>

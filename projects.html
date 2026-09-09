@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Projects & Impact</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding-bottom: 60px;
+        }
+        .header-section {
+            background-color: #0d616c;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .header-section h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .header-section p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: -20px auto 0 auto;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 35px;
+            gap: 15px;
+        }
+        .filter-btn {
+            background-color: #e9ecef;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #495057;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background-color: #0d616c;
+            color: white;
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .project-card {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f5;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+        }
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #ddd;
+        }
+        .project-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .project-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        .badge-ongoing { background-color: #ffeeba; color: #856404; }
+        .badge-completed { background-color: #d4edda; color: #155724; }
+        .badge-upcoming { background-color: #cce5ff; color: #004085; }
+        
+        .project-title {
+            font-size: 20px;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        .project-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        .project-meta {
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+        .project-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #0d616c;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .project-link:hover {
+            text-decoration: underline;
+        }
+        .impact-title {
+            text-align: center;
+            color: #0d616c;
+            font-size: 26px;
+            margin-bottom: 25px;
+        }
+        .impact-banner {
+            background-color: #0d616c;
+            color: white;
+            border-radius: 8px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            gap: 20px;
+        }
+        .impact-stat h3 {
+            font-size: 36px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        .impact-stat p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 40px;
+        }
+        @media(max-width: 768px) {
+            .impact-banner {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-section">
+        <h1>Our Projects</h1>
+        <p>Making a difference through our initiatives</p>
+    </div>
+
+    <div class="container">
+        <!-- स्टेटस फ़िल्टर बटन्स -->
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterProjects('all', this)">All Projects</button>
+            <button class="filter-btn" onclick="filterProjects('Ongoing', this)">Ongoing</button>
+            <button class="filter-btn" onclick="filterProjects('Completed', this)">Completed</button>
+            <button class="filter-btn" onclick="filterProjects('Upcoming', this)">Upcoming</button>
+        </div>
+
+        <!-- प्रोजेक्ट्स ग्रिड कंटेनर -->
+        <div id="projectsContainer" class="projects-grid"></div>
+
+        <!-- इम्पैक्ट बैनर सेक्शन -->
+        <h2 class="impact-title">Our Impact</h2>
+        <div class="impact-banner">
+            <div class="impact-stat">
+                <h3>500+</h3>
+                <p>People Helped</p>
+            </div>
+            <div class="impact-stat">
+                <h3>300+</h3>
+                <p>Volunteers Engaged</p>
+            </div>
+            <div class="impact-stat">
+                <h3>$50,000+</h3>
+                <p>Funds Raised</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allProjects = [];
+
+        function loadProjectsData() {
+            allProjects = JSON.parse(localStorage.getItem('ngoProjects')) || [
+                {
+                    id: 1,
+                    title: "Project Title 1",
+                    description: "A short description of the project. Providing educational support and learning kits.",
+                    status: "Ongoing",
+                    startDate: "2026-01-10",
+                    endDate: "2026-08-15",
+                    location: "Community Center Alpha",
+                    imageUrl: "https://unsplash.com"
+                },
+                {
+                    id: 2,
+                    title: "Project Title 2",
+                    description: "A short description of the project. Clean water installation program setup.",
+                    status: "Completed",
+                    startDate: "2025-03-01",
+                    endDate: "2025-11-20",
+                    location: "Rural Sector South",
+                    imageUrl: "https://unsplash.com"
+                },
+                {
+                    id: 3,
+                    title: "Project Title 3",
+                    description: "A short description of the project. Upcoming health and nutrition wellness drive.",
+                    status: "Upcoming",
+                    startDate: "2026-10-01",
+                    endDate: "2027-02-28",
+                    location: "Metro Suburbs",
+                    imageUrl: "https://unsplash.com"
+                }
+            ];
+            renderProjectsGrid(allProjects);
+        }
+
+        function renderProjectsGrid(projectsList) {
+            const container = document.getElementById('projectsContainer');
+            if(projectsList.length === 0) {
+                container.innerHTML = '<div class="empty-message">No matching projects found under this classification filter.</div>';
+                return;
+            }
+
+            container.innerHTML = projectsList.map(project => `
+                <div class="project-card">
+                    <img class="project-img" src="${project.imageUrl || 'https://placeholder.com'}" alt="${project.title}">
+                    <div class="project-body">
+                        <span class="project-badge badge-${project.status.toLowerCase()}">${project.status}</span>
+                        <h3 class="project-title">${project.title}</h3>
+                        <p class="project-desc">${project.description}</p>
+                        <div class="project-meta">
+                            <div><strong>Location:</strong> ${project.location}</div>
+                            <div><strong>Timeline:</strong> ${project.startDate} to ${project.endDate || 'Present'}</div>
+                        </div>
+                        <div><a href="#" class="project-link">Learn More</a></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProjects(status, element) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            if(status === 'all') {
+                renderProjectsGrid(allProjects);
+            } else {
+                const filtered = allProjects.filter(p => p.status === status);
+                renderProjectsGrid(filtered);
+            }
+        }
+
+        window.onload = loadProjectsData;
+    </script>
+</body>
+</html>
+

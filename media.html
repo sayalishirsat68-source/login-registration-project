@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Admin Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            padding: 20px;
+        }
+        .dashboard-card {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 26px;
+        }
+        h2 {
+            font-size: 18px;
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ccc;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="date"], input[type="url"], textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        .btn {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #004085;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .actions-cell {
+            width: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-card">
+        <h1>Manage Media Page</h1>
+
+        <!-- PRESS RELEASE SECTION -->
+        <h2>Press Release Section</h2>
+        <form id="pressForm">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="pressTitle" required placeholder="Enter press release headline">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="pressDate" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="pressDesc" required placeholder="Enter description contents..."></textarea>
+            </div>
+            <button type="submit" class="btn">Add Press Release</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th class="actions-cell">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="adminPressTable"></tbody>
+        </table>
+
+        <!-- MEDIA COVERAGE SECTION -->
+        <h2>Media Coverage Section</h2>
+        <form id="coverageForm">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="coverageTitle" required placeholder="Featured Outlet Name / Title">
+            </div>
+            <div class="form-group">
+                <label>URL</label>
+                <input type="url" id="coverageUrl" required placeholder="https://example.com">
+            </div>
+            <button type="submit" class="btn">Add Media Coverage</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>URL</th>
+                    <th class="actions-cell">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="adminCoverageTable"></tbody>
+        </table>
+
+        <!-- IMAGE GALLERY SECTION -->
+        <h2>Manage Image Gallery Section</h2>
+        <form id="galleryForm">
+            <div class="form-group">
+                <label>Image Source URL</label>
+                <input type="url" id="imageUrl" required placeholder="https://unsplash.com... or local address">
+            </div>
+            <button type="submit" class="btn">Add Image</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Image Source URL</th>
+                    <th class="actions-cell">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="adminGalleryTable"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Seed default initial data if none exists
+        if (!localStorage.getItem('pressReleases')) {
+            localStorage.setItem('pressReleases', JSON.stringify([{ id: 1, title: "NGO Launched New Initiative", date: "2026-01-15", description: "Supporting underprivileged children." }]));
+        }
+        if (!localStorage.getItem('mediaCoverage')) {
+            localStorage.setItem('mediaCoverage', JSON.stringify([{ id: 1, title: "Global News Feature", url: "https://example.com" }]));
+        }
+        if (!localStorage.getItem('galleryImages')) {
+            localStorage.setItem('galleryImages', JSON.stringify([
+                { id: 1, url: "https://unsplash.comphoto-1488521787991-ed7bbaae773c?w=500" },
+                { id: 2, url: "https://unsplash.comphoto-1509099836639-18ba1795216d?w=500" },
+                { id: 3, url: "https://unsplash.comphoto-1489641493513-ba4ee84cdead?w=500" }
+            ]));
+        }
+
+        function renderAdminTables() {
+            const pressReleases = JSON.parse(localStorage.getItem('pressReleases'));
+            const mediaCoverage = JSON.parse(localStorage.getItem('mediaCoverage'));
+            const galleryImages = JSON.parse(localStorage.getItem('galleryImages'));
+
+            document.getElementById('adminPressTable').innerHTML = pressReleases.map(item => `
+                <tr>
+                    <td>${item.title}</td>
+                    <td>${item.date}</td>
+                    <td>${item.description}</td>
+                    <td class="actions-cell"><button class="btn btn-danger" onclick="deleteItem('pressReleases', ${item.id})">Delete</button></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminCoverageTable').innerHTML = mediaCoverage.map(item => `
+                <tr>
+                    <td>${item.title}</td>
+                    <td><a href="${item.url}" target="_blank">${item.url}</a></td>
+                    <td class="actions-cell"><button class="btn btn-danger" onclick="deleteItem('mediaCoverage', ${item.id})">Delete</button></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminGalleryTable').innerHTML = galleryImages.map(item => `
+                <tr>
+                    <td style="word-break: break-all;">${item.url}</td>
+                    <td class="actions-cell"><button class="btn btn-danger" onclick="deleteItem('galleryImages', ${item.id})">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('pressForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const items = JSON.parse(localStorage.getItem('pressReleases'));
+            items.push({
+                id: Date.now(),
+                title: document.getElementById('pressTitle').value,
+                date: document.getElementById('pressDate').value,
+                description: document.getElementById('pressDesc').value
+            });
+            localStorage.setItem('pressReleases', JSON.stringify(items));
+            this.reset();
+            renderAdminTables();
+        });
+
+        document.getElementById('coverageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const items = JSON.parse(localStorage.getItem('mediaCoverage'));
+            items.push({
+                id: Date.now(),
+                title: document.getElementById('coverageTitle').value,
+                url: document.getElementById('coverageUrl').value
+            });
+            localStorage.setItem('mediaCoverage', JSON.stringify(items));
+            this.reset();
+            renderAdminTables();
+        });
+
+        document.getElementById('galleryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const items = JSON.parse(localStorage.getItem('galleryImages'));
+            items.push({
+                id: Date.now(),
+                url: document.getElementById('imageUrl').value
+            });
+            localStorage.setItem('galleryImages', JSON.stringify(items));
+            this.reset();
+            renderAdminTables();
+        });
+
+        function deleteItem(storageKey, id) {
+            let items = JSON.parse(localStorage.getItem(storageKey));
+            items = items.filter(item => item.id !== id);
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderAdminTables();
+        }
+
+        renderAdminTables();
+    </script>
+</body>
+</html>
+
