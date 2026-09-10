@@ -3,6 +3,16 @@
  * Handles user authentication state, navigation menu synchronization, and notification banners
  */
 
+const apiBaseUrl = String(window.NGO_API_URL || '').replace(/\/$/, '');
+const nativeFetch = window.fetch.bind(window);
+window.fetch = (input, options = {}) => {
+  const requestUrl = typeof input === 'string' ? input : input.url;
+  if (!requestUrl.startsWith('/api/')) return nativeFetch(input, options);
+
+  const requestOptions = { ...options, credentials: 'include' };
+  return nativeFetch(`${apiBaseUrl}${requestUrl}`, requestOptions);
+};
+
 // Helper to get active user
 function getCurrentUser() {
   try {
@@ -23,10 +33,30 @@ function setCurrentUser(user) {
   updateNavAuthState();
 }
 
+async function bootstrapAuthState() {
+  try {
+    const response = await fetch('/api/auth/me');
+    if (!response.ok) {
+      setCurrentUser(null);
+      return false;
+    }
+    const data = await response.json();
+    if (data && data.user) {
+      setCurrentUser(data.user);
+      return true;
+    }
+    setCurrentUser(null);
+    return false;
+  } catch (error) {
+    setCurrentUser(null);
+    return false;
+  }
+}
+
 // User logout
 async function logoutUser() {
   try {
-    await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+    await fetch('/api/logout', { method: 'POST' });
   } catch (e) {
     // Clear the local display state even if the server is unavailable.
   }
@@ -119,4 +149,5 @@ function showToast(message, type = 'success') {
 // Auto-run on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   updateNavAuthState();
+  bootstrapAuthState();
 });

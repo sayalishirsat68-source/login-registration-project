@@ -7,6 +7,9 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const { db, dataDirectory, now } = require('./database');
+const { requireAuth, userView } = require('./middleware/authMiddleware');
+const { requireRole } = require('./middleware/roleMiddleware');
+const { validateRegistration, validateLogin, validatePasswordChange, normalizeEmail } = require('./validators/authValidator');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -19,7 +22,6 @@ const clean = value => value === null || value === undefined ? '' : String(value
 const email = value => clean(value).toLowerCase();
 const required = (body, fields) => fields.every(field => clean(body[field]));
 const error = (res, status, message) => res.status(status).json({ message });
-const userView = user => ({ user_id: user.user_id, full_name: user.full_name, email: user.email, role: user.role, status: user.status });
 const projectView = project => ({ id: project.id, title: project.title, description: project.description, status: project.status, startDate: project.start_date, endDate: project.end_date, location: project.location, imageUrl: project.image_url });
 
 class SQLiteSessionStore extends session.Store {
@@ -59,11 +61,8 @@ function audit(req, action, resource, resourceId = null) {
   db.prepare('INSERT INTO audit_logs (user_id, action, resource, resource_id, created_at) VALUES (?, ?, ?, ?, ?)').run(req.session.user.user_id, action, resource, resourceId, now());
 }
 
-function adminOnly(req, res, next) {
-  if (!req.session.user) return error(res, 401, 'Authentication required.');
-  if (req.session.user.role !== 'Admin') return error(res, 403, 'Administrator access required.');
-  next();
-}
+const authenticated = requireAuth;
+const adminOnly = requireRole('Admin');
 
 function seedAdmin() {
   if (db.prepare('SELECT user_id FROM users WHERE email = ?').get('admin@ngo.org')) return;
@@ -77,13 +76,16 @@ app.disable('x-powered-by');
 app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use((req, res, next) => {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN;
+  const allowedOrigin = process.env.FRONTEND_URL || process.env.ALLOWED_ORIGIN;
   if (allowedOrigin && req.headers.origin && req.headers.origin !== allowedOrigin) return error(res, 403, 'Origin is not allowed.');
   if (allowedOrigin && req.headers.origin) {
     res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
     res.setHeader('Vary', 'Origin');
   }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
 app.use(express.json({ limit: process.env.BODY_LIMIT || '100kb' }));
@@ -93,7 +95,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET || (production ? undefined : 'local-development-session-secret'),
   resave: false,
   saveUninitialized: false,
-  cookie: { httpOnly: true, sameSite: 'lax', secure: production, maxAge: 8 * 60 * 60 * 1000 }
+  cookie: {
+    httpOnly: true,
+    sameSite: process.env.COOKIE_SAME_SITE || 'lax',
+    secure: production || process.env.COOKIE_SECURE === 'true',
+    maxAge: 8 * 60 * 60 * 1000
+  }
 }));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 200, standardHeaders: 'draft-8', legacyHeaders: false }));
 const authLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false });
@@ -101,37 +108,74 @@ const authLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeade
 app.get('/healthz', (req, res) => res.json({ status: 'ok', database: 'sqlite', time: now() }));
 
 app.post('/api/register', authLimit, async (req, res, next) => {
-  if (!required(req.body, ['full_name', 'email', 'password', 'role'])) return error(res, 400, 'All fields (Name, Email, Password, Role) are required.');
-  const fullName = clean(req.body.full_name);
-  const userEmail = email(req.body.email);
-  const password = String(req.body.password);
-  if (fullName.length > 120 || userEmail.length > 254 || password.length < 8 || password.length > 128) return error(res, 400, 'Use a valid name and email, and a password between 8 and 128 characters.');
+  const validation = validateRegistration(req.body);
+  if (!validation.valid) return res.status(400).json({ success: false, message: 'Validation failed.', errors: validation.errors });
+
+  const { fullName, email: userEmail, password, role } = validation.value;
   try {
-    const role = clean(req.body.role) === 'Admin' ? 'Member' : clean(req.body.role) || 'Member';
-    const result = db.prepare('INSERT INTO users (full_name, email, password_hash, role, status, created_at) VALUES (?, ?, ?, ?, ?, ?)').run(fullName, userEmail, await bcrypt.hash(password, 12), role, 'active', now());
+    const safeRole = role === 'Admin' ? 'Member' : role || 'Member';
+    const result = db.prepare('INSERT INTO users (full_name, email, password_hash, role, status, created_at) VALUES (?, ?, ?, ?, ?, ?)').run(fullName, userEmail, await bcrypt.hash(password, 12), safeRole, 'active', now());
     const user = db.prepare('SELECT * FROM users WHERE user_id = ?').get(result.lastInsertRowid);
-    res.status(201).json({ message: 'User registered successfully!', user: userView(user) });
+    res.status(201).json({ success: true, message: 'User registered successfully!', user: userView(user) });
   } catch (err) {
-    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') return error(res, 400, 'Email is already registered.');
+    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') return res.status(409).json({ success: false, message: 'This email is already registered.' });
     next(err);
   }
 });
 
 app.post('/api/login', authLimit, async (req, res, next) => {
-  if (!required(req.body, ['email', 'password'])) return error(res, 400, 'Email and password are required.');
+  const validation = validateLogin(req.body);
+  if (!validation.valid) return res.status(400).json({ success: false, message: 'Validation failed.', errors: validation.errors });
+
   try {
-    const user = db.prepare('SELECT * FROM users WHERE email = ? AND status = ?').get(email(req.body.email), 'active');
-    if (!user || !(await bcrypt.compare(String(req.body.password), user.password_hash))) return error(res, 401, 'Invalid email or password.');
+    const user = db.prepare('SELECT * FROM users WHERE email = ? AND status = ?').get(validation.value.email, 'active');
+    if (!user || !(await bcrypt.compare(validation.value.password, user.password_hash))) return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     req.session.regenerate(err => {
       if (err) return next(err);
       req.session.user = userView(user);
-      res.json({ message: 'Login successful!', user: req.session.user });
+      res.json({ success: true, message: 'Login successful!', user: req.session.user });
     });
   } catch (err) { next(err); }
 });
 app.post('/api/logout', (req, res, next) => req.session.destroy(err => err ? next(err) : (res.clearCookie('connect.sid'), res.json({ message: 'Logged out successfully.' }))));
-app.get('/api/me', (req, res) => res.json({ user: req.session.user || null }));
-app.get('/api/users', adminOnly, (req, res) => res.json({ users: db.prepare('SELECT user_id, full_name, email, role, status, created_at FROM users ORDER BY user_id DESC').all() }));
+app.get('/api/auth/me', requireAuth, (req, res) => res.json({ success: true, user: req.session.user }));
+app.get('/api/me', authenticated, (req, res) => res.json({ user: req.session.user }));
+app.get('/api/users', requireRole('Admin'), (req, res) => res.json({ users: db.prepare('SELECT user_id, full_name, email, role, status, created_at FROM users ORDER BY user_id DESC').all() }));
+app.patch('/api/me/password', authenticated, async (req, res, next) => {
+  const validation = validatePasswordChange(req.body);
+  if (!validation.valid) return error(res, 400, Object.values(validation.errors)[0]);
+
+  const { currentPassword, newPassword } = validation.value;
+  try {
+    const user = db.prepare('SELECT password_hash FROM users WHERE user_id = ?').get(req.session.user.user_id);
+    if (!user || !(await bcrypt.compare(currentPassword, user.password_hash))) return error(res, 401, 'Current password is incorrect.');
+    const userId = req.session.user.user_id;
+    db.prepare('UPDATE users SET password_hash = ? WHERE user_id = ?').run(await bcrypt.hash(newPassword, 12), userId);
+    audit(req, 'password_change', 'user', userId);
+    req.session.regenerate(err => {
+      if (err) return next(err);
+      const refreshedUser = db.prepare('SELECT user_id, full_name, email, role, status FROM users WHERE user_id = ?').get(userId);
+      if (!refreshedUser) return error(res, 500, 'Unable to refresh session.');
+      req.session.user = userView(refreshedUser);
+      res.json({ message: 'Password updated successfully.' });
+    });
+  } catch (err) { next(err); }
+});
+app.patch('/api/users/:id/status', adminOnly, (req, res) => {
+  const userId = Number(req.params.id);
+  const status = clean(req.body.status);
+  if (!['active', 'inactive'].includes(status)) return error(res, 400, 'Status must be active or inactive.');
+  if (userId === req.session.user.user_id && status !== 'active') return error(res, 400, 'You cannot deactivate your own account.');
+  const target = db.prepare('SELECT user_id, role, status FROM users WHERE user_id = ?').get(userId);
+  if (!target) return error(res, 404, 'User not found.');
+  if (target.role === 'Admin' && status === 'inactive') {
+    const activeAdmins = db.prepare("SELECT COUNT(*) AS count FROM users WHERE role = 'Admin' AND status = 'active'").get().count;
+    if (activeAdmins <= 1) return error(res, 400, 'At least one active administrator is required.');
+  }
+  db.prepare('UPDATE users SET status = ? WHERE user_id = ?').run(status, userId);
+  audit(req, 'status_update', 'user', userId);
+  res.json({ message: `User ${status === 'active' ? 'activated' : 'deactivated'} successfully.` });
+});
 
 app.get('/api/volunteers', adminOnly, (req, res) => res.json({ volunteers: db.prepare('SELECT * FROM volunteers ORDER BY created_at DESC').all() }));
 app.post('/api/volunteers', (req, res) => {
@@ -155,21 +199,42 @@ app.post('/api/contact', (req, res) => {
 });
 
 app.get('/api/donations', (req, res) => {
-  const donations = db.prepare("SELECT id, donor_name, amount, cause, status, created_at FROM donations WHERE status IN ('paid', 'mock_paid') ORDER BY created_at DESC").all();
-  const totalAmount = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status IN ('paid', 'mock_paid')").get().total;
-  res.json({ donations, totalCount: donations.length, totalAmount });
+  const donations = db.prepare("SELECT id, donor_name, amount, cause, status, currency, provider_id, provider_status, receipt_number, created_at, verified_at FROM donations ORDER BY created_at DESC").all();
+  const totalAmount = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status = 'paid'").get().total;
+  res.json({ donations, totalCount: donations.filter(donation => donation.status === 'paid').length, totalAmount });
 });
 app.post('/api/donations', (req, res) => {
   if (!required(req.body, ['donor_name', 'donor_email', 'amount'])) return error(res, 400, 'Name, email, and amount are required.');
   const amount = Number(req.body.amount);
   if (!Number.isFinite(amount) || amount <= 0 || amount > 10000000) return error(res, 400, 'Please enter a valid donation amount.');
-  const result = db.prepare("INSERT INTO donations (donor_name, donor_email, amount, cause, status, created_at) VALUES (?, ?, ?, ?, 'mock_paid', ?)").run(clean(req.body.donor_name), email(req.body.donor_email), amount, clean(req.body.cause) || 'General Fund', now());
-  const donation = db.prepare('SELECT id, donor_name, amount, cause, status, created_at FROM donations WHERE id = ?').get(result.lastInsertRowid);
-  const totalRaised = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status IN ('paid', 'mock_paid')").get().total;
-  res.status(201).json({ message: 'Donation recorded in development mode. No payment was processed.', donation, totalRaised });
+  const currency = clean(req.body.currency) || 'USD';
+  const result = db.prepare("INSERT INTO donations (donor_name, donor_email, amount, cause, status, currency, provider_status, created_at, updated_at) VALUES (?, ?, ?, ?, 'pending', ?, 'pending', ?, ?)").run(clean(req.body.donor_name), email(req.body.donor_email), amount, clean(req.body.cause) || 'General Fund', currency, now(), now());
+  const donation = db.prepare('SELECT id, donor_name, donor_email, amount, cause, status, currency, provider_status, receipt_number, created_at, verified_at FROM donations WHERE id = ?').get(result.lastInsertRowid);
+  const totalRaised = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status = 'paid'").get().total;
+  res.status(201).json({ message: 'Donation submitted and awaiting verification.', donation, totalRaised });
+});
+app.patch('/api/donations/:id/verify', adminOnly, (req, res) => {
+  const donationId = Number(req.params.id);
+  const donation = db.prepare('SELECT * FROM donations WHERE id = ?').get(donationId);
+  if (!donation) return error(res, 404, 'Donation not found.');
+
+  const providerStatus = clean(req.body.provider_status || '').toLowerCase();
+  const paidStatuses = new Set(['paid', 'succeeded', 'captured', 'completed', 'settled']);
+  if (!paidStatuses.has(providerStatus)) return error(res, 400, 'Donation must be verified as a successful paid payment before it can be recorded.');
+
+  const receiptNumber = donation.receipt_number || `NGO-${String(donationId).padStart(6, '0')}-${Date.now().toString().slice(-6)}`;
+  const providerId = clean(req.body.provider_id) || donation.provider_id || `manual-${donationId}`;
+  const currency = clean(req.body.currency) || donation.currency || 'USD';
+  const timestamp = now();
+
+  db.prepare("UPDATE donations SET status = 'paid', currency = ?, provider_id = ?, provider_status = ?, receipt_number = ?, verified_at = ?, updated_at = ? WHERE id = ?").run(currency, providerId, providerStatus, receiptNumber, timestamp, timestamp, donationId);
+  audit(req, 'verify', 'donation', donationId);
+
+  const updatedDonation = db.prepare('SELECT id, donor_name, donor_email, amount, cause, status, currency, provider_id, provider_status, receipt_number, created_at, verified_at FROM donations WHERE id = ?').get(donationId);
+  res.json({ message: 'Donation verified and receipt generated.', donation: updatedDonation });
 });
 app.get('/api/stats', (req, res) => {
-  const total = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status IN ('paid', 'mock_paid')").get().total;
+  const total = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status = 'paid'").get().total;
   res.json({ campaignsHosted: 3067, studentsReceived: '10,000+', patientsTreated: '50,000+', activeVolunteers: db.prepare('SELECT COUNT(*) AS count FROM volunteers').get().count + 2000, totalRaised: total + 50000, registeredUsersCount: db.prepare('SELECT COUNT(*) AS count FROM users').get().count });
 });
 

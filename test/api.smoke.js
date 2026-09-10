@@ -61,6 +61,37 @@ async function request(path, options = {}, cookie) {
       body: JSON.stringify({ full_name: 'Smoke Tester', email: uniqueEmail, password: 'StrongPass123!', role: 'Member' })
     });
     assert.equal(result.response.status, 201);
+    const userId = result.body.user.user_id;
+
+    result = await request('/api/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: uniqueEmail, password: 'StrongPass123!' })
+    });
+    assert.equal(result.response.status, 200);
+    let userCookie = result.cookie.split(';')[0];
+
+    result = await request('/api/me/password', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ current_password: 'StrongPass123!', new_password: 'NewStrongPass123!' })
+    }, userCookie);
+    assert.equal(result.response.status, 200);
+    userCookie = result.cookie.split(';')[0];
+
+    result = await request('/api/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: uniqueEmail, password: 'StrongPass123!' })
+    });
+    assert.equal(result.response.status, 401);
+
+    result = await request('/api/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: uniqueEmail, password: 'NewStrongPass123!' })
+    });
+    assert.equal(result.response.status, 200);
 
     result = await request('/api/login', {
       method: 'POST',
@@ -73,6 +104,23 @@ async function request(path, options = {}, cookie) {
     result = await request('/api/users', {}, cookie);
     assert.equal(result.response.status, 200);
     assert.ok(Array.isArray(result.body.users));
+
+    result = await request(`/api/users/${userId}/status`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ status: 'inactive' })
+    }, cookie);
+    assert.equal(result.response.status, 200);
+
+    result = await request('/api/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: uniqueEmail, password: 'NewStrongPass123!' })
+    });
+    assert.equal(result.response.status, 401);
+
+    result = await request('/api/me', {}, userCookie);
+    assert.equal(result.response.status, 401);
 
     result = await request('/api/projects', {
       method: 'POST',
@@ -87,6 +135,28 @@ async function request(path, options = {}, cookie) {
       body: JSON.stringify({ donor_name: 'Smoke Tester', donor_email: uniqueEmail, amount: -1 })
     });
     assert.equal(result.response.status, 400);
+
+    result = await request('/api/donations', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ donor_name: 'Verified Donor', donor_email: uniqueEmail, amount: 25, cause: 'Phase 5 test', currency: 'USD' })
+    });
+    assert.equal(result.response.status, 201);
+    assert.equal(result.body.donation.status, 'pending');
+    const pendingDonationId = result.body.donation.id;
+
+    result = await request(`/api/donations/${pendingDonationId}/verify`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ provider_id: 'manual_provider_123', provider_status: 'paid', currency: 'USD' })
+    }, cookie);
+    assert.equal(result.response.status, 200);
+    assert.equal(result.body.donation.status, 'paid');
+    assert.ok(result.body.donation.receipt_number);
+
+    result = await request('/api/donations');
+    assert.equal(result.response.status, 200);
+    assert.ok(result.body.donations.some(donation => donation.id === pendingDonationId && donation.status === 'paid'));
 
     console.log('API smoke tests passed.');
   } finally {

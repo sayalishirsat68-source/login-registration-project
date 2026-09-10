@@ -1,0 +1,2 @@
+-- Version 1 is the schema created by database.js before migrations were introduced.
+-- Existing databases are recorded against this baseline without destructive changes.

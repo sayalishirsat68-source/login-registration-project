@@ -1,0 +1,9 @@
+$backendItems = @(
+  'server.js', 'database.js', 'migrate.js', 'middleware', 'validators',
+  'migrations', 'scripts', 'data', 'test'
+)
+
+foreach ($item in $backendItems) {
+  $source = Join-Path $root $item
+  if (Test-Path -LiteralPath $source) { Move-Item -LiteralPath $source -Destination $backend }
+}

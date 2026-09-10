@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
 require('dotenv').config();
+const { migrateDatabase } = require('./migrate');
 
 const dataDirectory = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDirectory, { recursive: true });
@@ -49,8 +50,13 @@ db.exec(`
     donor_email TEXT NOT NULL,
     amount REAL NOT NULL CHECK (amount > 0),
     cause TEXT NOT NULL DEFAULT 'General Fund',
-    status TEXT NOT NULL DEFAULT 'mock_paid',
+    status TEXT NOT NULL DEFAULT 'pending',
+    currency TEXT NOT NULL DEFAULT 'USD',
     provider_id TEXT,
+    provider_status TEXT,
+    receipt_number TEXT,
+    verified_at TEXT,
+    updated_at TEXT,
     created_at TEXT NOT NULL
   );
 
@@ -126,6 +132,13 @@ db.exec(`
   );
 `);
 
+migrateDatabase(db);
+
+const donationColumns = new Set(db.prepare('PRAGMA table_info(donations)').all().map(column => column.name));
+for (const column of ['provider_id', 'provider_status', 'receipt_number', 'verified_at', 'updated_at']) {
+  if (!donationColumns.has(column)) db.exec(`ALTER TABLE donations ADD COLUMN ${column} TEXT`);
+}
+
 const now = () => new Date().toISOString();
 
 const seed = db.transaction(() => {
@@ -139,10 +152,10 @@ const seed = db.transaction(() => {
     .run('We represent an IT firm looking to sponsor 10 digital classrooms under your Girls Education drive.');
 
   const insertDonation = db.prepare(`INSERT OR IGNORE INTO donations
-    (id, donor_name, donor_email, amount, cause, status, created_at) VALUES (?, ?, ?, ?, ?, 'mock_paid', ?)`);
-  insertDonation.run(1, 'Rohan Gupta', 'rohan.g@example.com', 2500, 'Girls Education', '2026-03-02T11:00:00.000Z');
-  insertDonation.run(2, 'Sneha Kulkarni', 'sneha.k@example.com', 5000, 'Child Nutrition', '2026-03-06T16:20:00.000Z');
-  insertDonation.run(3, 'Aarav Mehta', 'aarav@example.com', 1000, 'Elderly Care', '2026-03-08T08:45:00.000Z');
+    (id, donor_name, donor_email, amount, cause, status, currency, provider_status, receipt_number, verified_at, updated_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', ?, ?, ?, ?)`);
+  insertDonation.run(1, 'Rohan Gupta', 'rohan.g@example.com', 2500, 'Girls Education', 'paid', 'INR', 'NGO-000001-202603', '2026-03-02T11:00:00.000Z', '2026-03-02T11:00:00.000Z', '2026-03-02T11:00:00.000Z');
+  insertDonation.run(2, 'Sneha Kulkarni', 'sneha.k@example.com', 5000, 'Child Nutrition', 'paid', 'INR', 'NGO-000002-202603', '2026-03-06T16:20:00.000Z', '2026-03-06T16:20:00.000Z', '2026-03-06T16:20:00.000Z');
+  insertDonation.run(3, 'Aarav Mehta', 'aarav@example.com', 1000, 'Elderly Care', 'paid', 'INR', 'NGO-000003-202603', '2026-03-08T08:45:00.000Z', '2026-03-08T08:45:00.000Z', '2026-03-08T08:45:00.000Z');
 
   db.prepare(`INSERT OR IGNORE INTO about_story (id, story_text, story_image) VALUES (1, ?, ?)`)
     .run('Founded in 2015, our journey started with a small group of passionate volunteers addressing local community issues. Over the years, we have grown into a fully dedicated NGO, reaching thousands of individuals across multiple regions and driving lasting social change.', 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80');

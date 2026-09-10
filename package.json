@@ -7,7 +7,10 @@
     "dev": "node server.js",
     "start": "node server.js",
     "build": "node --check server.js && node --check database.js",
-    "test": "node test/api.smoke.js"
+    "test": "node test/api.smoke.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:backup": "node scripts/backup.js",
+    "db:restore": "node scripts/restore.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

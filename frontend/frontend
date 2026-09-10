@@ -1,0 +1,10 @@
+$frontendFiles = @(
+  'about us.html', 'blog.html', 'compaign.html', 'contact us.html', 'donate.html',
+  'features.html', 'index.html', 'join us.html', 'login.html', 'media.html',
+  'ngo.html', 'projects.html', 'register.html', 'style.css', 'app.js'
+)
+
+foreach ($file in $frontendFiles) {
+  $source = Join-Path $root $file
+  if (Test-Path -LiteralPath $source) { Move-Item -LiteralPath $source -Destination $frontend }
+}

@@ -158,14 +158,46 @@
         const alertBox = document.getElementById('alert-box');
         const submitBtn = document.getElementById('submit-btn');
 
+        function validateRegistrationForm() {
+            const full_name = document.getElementById('full_name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            if (!full_name || !email || !password || !role) {
+                return 'All fields are required.';
+            }
+            if (full_name.length < 2) {
+                return 'Full name must be at least 2 characters long.';
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return 'Please provide a valid email address.';
+            }
+            if (password.length < 8) {
+                return 'Password must be at least 8 characters long.';
+            }
+            if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+                return 'Password must include at least one uppercase letter and one number.';
+            }
+            return '';
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const validationMessage = validateRegistrationForm();
+            if (validationMessage) {
+                alertBox.className = 'alert alert-error';
+                alertBox.textContent = validationMessage;
+                alertBox.style.display = 'block';
+                return;
+            }
+
             alertBox.style.display = 'none';
             submitBtn.disabled = true;
             submitBtn.textContent = 'Registering...';
 
-            const full_name = document.getElementById('full_name').value;
-            const email = document.getElementById('email').value;
+            const full_name = document.getElementById('full_name').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
 
@@ -173,7 +205,8 @@
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ full_name, email, password, role })
+                    body: JSON.stringify({ full_name, email, password, role, confirm_password: password }),
+                    credentials: 'same-origin'
                 });
 
                 const data = await response.json();

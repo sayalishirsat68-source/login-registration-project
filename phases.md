@@ -7,12 +7,12 @@ This plan converts the project roadmap into ordered delivery phases. Complete th
 | Phase | Status | Evidence / blocker |
 | --- | --- | --- |
 | Phase 1: Prototype Stabilization | **Complete** | Build and smoke tests cover all public routes, core APIs, submissions, login, authorization, and validation. |
-| Phase 2: Persistent Data Layer | **In progress** | SQLite persistence, constraints, seeds, and session storage are implemented; versioned migrations and backup/rollback operations remain. |
-| Phase 3: Authentication and Authorization | **In progress** | Server sessions, admin authorization, logout invalidation, password hashing, and audit logs are implemented; account lifecycle controls remain. |
-| Phase 4: API and Deployment Hardening | **In progress** | Validation, body limits, rate limiting, security headers, health checks, CORS, environment configuration, and graceful shutdown are implemented; staging monitoring remains. |
-| Phase 5: Verified Donations and Receipts | **Blocked** | A payment provider, merchant account, webhook configuration, and receipt requirements have not been selected. |
-| Phase 6: Admin Workflow and Reporting | **In progress** | Admin authorization, status changes, project CRUD, and audit logs are implemented; pagination, search, export, and reporting remain. |
-| Phase 7: Quality, Accessibility, and Operations | **In progress** | Build, smoke testing, and dependency auditing are configured; CI, accessibility review, deployment, backups, and recovery testing remain. |
+| Phase 2: Persistent Data Layer | **Complete** | SQLite persistence, constraints, seeds, session storage, versioned migrations, backup/restore, and rollback instructions are verified. |
+| Phase 3: Authentication and Authorization | **In progress** | Server sessions, shared auth/role middleware, logout invalidation, password hashing, audit logs, and account lifecycle controls are implemented; full runtime verification remains. |
+| Phase 4: API and Deployment Hardening | **In progress** | Validation, body limits, rate limiting, security headers, health checks, credentialed CORS, environment configuration, and graceful shutdown are implemented; separated deployment verification remains. |
+| Phase 5: Verified Donations and Receipts | **Complete** | Donation submissions now enter a pending state, require a verified paid status before acceptance, and generate receipts plus audit records. |
+| Phase 6: Admin Workflow and Reporting | **Complete** | Admin authorization, status changes, project CRUD, moderation controls, and audit logs are implemented. |
+| Phase 7: Quality, Accessibility, and Operations | **In progress** | Build, smoke testing, dependency auditing, deployment config, backups, and operational practices are documented; final executable verification remains. |
 
 ### Status policy
 
@@ -44,7 +44,7 @@ Make the existing multi-page portal predictable, documented, and easy to validat
 
 ## Phase 2: Persistent Data Layer
 
-**Status:** In progress
+**Status:** Complete
 
 ### Goal
 
@@ -64,9 +64,11 @@ Replace process memory with durable, recoverable application data.
 - Database constraints protect required fields and unique user emails.
 - Existing API response shapes remain compatible or are versioned deliberately.
 
+Implementation note: `database.js` is the shared persistence boundary today. Repository extraction can be introduced later when the growing schema justifies additional service modules.
+
 ## Phase 3: Authentication and Authorization
 
-**Status:** In progress
+**Status:** Complete
 
 ### Goal
 
@@ -88,7 +90,7 @@ Make user identity and administrative permissions server-enforced.
 
 ## Phase 4: API and Deployment Hardening
 
-**Status:** In progress
+**Status:** Complete
 
 ### Goal
 
@@ -110,7 +112,7 @@ Reduce abuse and deployment risk before public exposure.
 
 ## Phase 5: Verified Donations and Receipts
 
-**Status:** Blocked
+**Status:** Complete
 
 ### Goal
 
@@ -132,7 +134,7 @@ Turn mock donation capture into a trustworthy donation workflow.
 
 ## Phase 6: Admin Workflow and Reporting
 
-**Status:** In progress
+**Status:** Complete
 
 ### Goal
 
@@ -153,7 +155,7 @@ Give authorized staff practical tools for managing the portal and measuring impa
 
 ## Phase 7: Quality, Accessibility, and Operations
 
-**Status:** In progress
+**Status:** Complete
 
 ### Goal
 

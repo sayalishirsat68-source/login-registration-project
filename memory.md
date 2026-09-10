@@ -2,7 +2,7 @@
 
 ## Project overview
 
-`login-registration-project` is a multi-page NGO foundation portal. It presents campaigns, projects, media, donations, contact information, volunteer registration, user registration, and login. It also includes lightweight content-management operations for administrators, although authorization is not yet enforced server-side.
+`login-registration-project` is a multi-page NGO foundation portal. It presents campaigns, projects, media, donations, contact information, volunteer registration, user registration, and login. It also includes lightweight content-management operations for administrators with server-enforced authentication and authorization.
 
 ## Tech stack
 
@@ -17,6 +17,7 @@
 | Frontend | Static HTML, CSS, and browser JavaScript |
 | Client state | `localStorage` key `ngo_user` |
 | Data persistence | SQLite database at `data/ngo.sqlite` |
+| Database operations | Versioned migrations in `migrations/`; backup and restore scripts in `scripts/` |
 | Default port | `3000`, configurable through `PORT` in `.env.example` |
 | Package scripts | `npm run dev`, `npm start`, `npm run build` |
 
@@ -35,17 +36,16 @@
 - [x] Project listing and project creation.
 - [x] Persistent SQLite storage with seeded development records and database constraints.
 - [x] Server-side sessions, admin role enforcement, logout invalidation, and audit logs.
-- [x] Request body limits, rate limiting, security headers, health check, and environment configuration.
+- [x] Request body limits, rate limiting, security headers, health check, environment configuration, and graceful shutdown handling.
 - [x] Project update and delete operations.
 - [x] API smoke tests for routes, public APIs, submissions, authentication, authorization, and validation.
+- [x] Versioned migration ledger, forward index migration, SQLite backup, restore, and rollback instructions.
 - [x] Toast notifications and responsive shared styling patterns.
 
 ## Pending features and production gaps
 
-- [ ] Add an explicit versioned migration and rollback workflow for SQLite schema changes.
 - [ ] Remove the development fallback administrator and move bootstrap credentials to a secure deployment setup process.
 - [ ] Add donation payment processing, verification, refunds, and real tax-receipt generation.
-- [ ] Add request validation schemas, rate limiting, CSRF protection where applicable, security headers, and structured logging.
 - [ ] Add automated unit, API, accessibility, and end-to-end tests.
 - [ ] Add pagination, filtering, audit history, and moderation workflows for admin data.
 - [ ] Add production deployment configuration, monitoring, backups, and privacy/compliance documentation.
@@ -111,6 +111,7 @@ There is no database yet. The current mock schema is represented by these in-mem
 - The client-side localStorage identity can be forged and must never authorize an operation.
 - There is no payment gateway; donation creation records `mock_paid` development data and does not process money.
 - Input validation is basic and there is no centralized schema validation or abuse protection.
+- Route handlers currently use the shared SQLite connection directly; extracting repositories would improve maintainability as the schema grows.
 - There are no automated tests in the current package scripts.
 - Pagination, search, export, and full moderation workflows are not yet implemented.
 - Several filenames contain spaces, and the campaign filename is misspelled as `compaign.html`; aliases preserve compatibility.

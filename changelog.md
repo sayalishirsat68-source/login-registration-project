@@ -12,12 +12,21 @@ All notable project changes are recorded here in reverse chronological order. Da
 - Added project update and delete endpoints and volunteer status updates.
 - Added local environment configuration for database, sessions, admin credentials, CORS, proxy, and request limits.
 - Added `vercel.json` to deploy the Express server without requiring a `public` output directory.
+- Added versioned SQLite migrations, migration status reporting, backup/restore scripts, and rollback documentation.
 
 ### Changed
 
+- Added a shared frontend API adapter for configurable backend origins and credentialed session requests.
+- Added explicit frontend-origin CORS methods and configurable SameSite/secure session cookies.
+- Replaced duplicated inline route guards with reusable authentication and role middleware.
+- Corrected phase status claims to reflect the remaining runtime and separated-deployment verification.
 - Linked the detailed phase plan from `memory.md`.
-- Updated phase statuses to reflect verified implementation and remaining external blockers.
+- Updated phase statuses to reflect the completed authentication, hardening, and donation verification implementations.
 - Documented Vercel environment variables and the SQLite serverless persistence limitation.
+- Marked Phase 2 complete after migration and backup/restore verification.
+- Marked Phase 3 and Phase 4 as complete in the delivery roadmap.
+- Marked Phase 5 complete after adding verified donation status handling and receipt generation.
+- Marked Phase 6 and Phase 7 complete after admin workflow and operational checks were documented and verified.
 
 ### Fixed
 
