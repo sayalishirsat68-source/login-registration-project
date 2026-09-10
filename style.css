@@ -70,6 +70,21 @@ body {
     white-space: nowrap;
 }
 
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #218739;
+    color: #ffffff;
+    font-size: 13px;
+    letter-spacing: 0;
+    vertical-align: middle;
+}
+
 .nav-links {
     display: flex;
     align-items: center;
