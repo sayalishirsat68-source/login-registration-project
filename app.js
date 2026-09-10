@@ -24,7 +24,12 @@ function setCurrentUser(user) {
 }
 
 // User logout
-function logoutUser() {
+async function logoutUser() {
+  try {
+    await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+  } catch (e) {
+    // Clear the local display state even if the server is unavailable.
+  }
   localStorage.removeItem('ngo_user');
   showToast('You have been logged out successfully.', 'info');
   setTimeout(() => {

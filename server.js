@@ -1,579 +1,320 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const express = require('express');
+const session = require('express-session');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config();
+
+const { db, dataDirectory, now } = require('./database');
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
+const production = process.env.NODE_ENV === 'production';
+const adminPassword = process.env.ADMIN_PASSWORD || (production ? null : 'admin123');
+if (!adminPassword) throw new Error('ADMIN_PASSWORD must be set in production.');
+if (production && !process.env.SESSION_SECRET) throw new Error('SESSION_SECRET must be set in production.');
 
-// Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const clean = value => value === null || value === undefined ? '' : String(value).trim();
+const email = value => clean(value).toLowerCase();
+const required = (body, fields) => fields.every(field => clean(body[field]));
+const error = (res, status, message) => res.status(status).json({ message });
+const userView = user => ({ user_id: user.user_id, full_name: user.full_name, email: user.email, role: user.role, status: user.status });
+const projectView = project => ({ id: project.id, title: project.title, description: project.description, status: project.status, startDate: project.start_date, endDate: project.end_date, location: project.location, imageUrl: project.image_url });
 
-// ==========================================
-// IN-MEMORY DATA STORES (MOCK DATABASE)
-// ==========================================
-
-// 1. Users Store
-const users = [];
-
-// 2. Volunteers Store
-const volunteers = [
-  {
-    id: 1,
-    full_name: 'Rahul Sharma',
-    email: 'rahul.s@example.com',
-    phone: '9876543210',
-    message: 'I am a software engineer and would love to help teach digital literacy skills to young students.',
-    status: 'Pending Review',
-    created_at: new Date('2026-03-01T10:00:00Z').toISOString()
-  },
-  {
-    id: 2,
-    full_name: 'Anita Desai',
-    email: 'anita.desai@example.com',
-    phone: '9812345678',
-    message: 'Interested in weekend meal distribution and organizing health awareness camps in rural communities.',
-    status: 'Approved',
-    created_at: new Date('2026-03-04T14:30:00Z').toISOString()
+class SQLiteSessionStore extends session.Store {
+  get(id, callback) {
+    try {
+      const row = db.prepare('SELECT expires_at, session_json FROM sessions WHERE session_id = ?').get(id);
+      if (!row || (row.expires_at && row.expires_at <= Date.now())) {
+        if (row) this.destroy(id, () => {});
+        return callback(null, null);
+      }
+      callback(null, JSON.parse(row.session_json));
+    } catch (err) { callback(err); }
   }
-];
 
-// 3. Contact Inquiries Store
-const inquiries = [
-  {
-    id: 1,
-    name: 'Vikram Patel',
-    email: 'vikram.p@example.com',
-    phone: '9123456789',
-    subject: 'Partnership Inquiry for Corporate CSR',
-    message: 'We represent an IT firm looking to sponsor 10 digital classrooms under your Girls Education drive.',
-    created_at: new Date('2026-03-05T09:15:00Z').toISOString()
+  set(id, sessionData, callback) {
+    try {
+      const expiresAt = sessionData.cookie && sessionData.cookie.expires ? new Date(sessionData.cookie.expires).getTime() : null;
+      db.prepare('INSERT INTO sessions (session_id, expires_at, session_json) VALUES (?, ?, ?) ON CONFLICT(session_id) DO UPDATE SET expires_at = excluded.expires_at, session_json = excluded.session_json').run(id, expiresAt, JSON.stringify(sessionData));
+      callback(null);
+    } catch (err) { callback(err); }
   }
-];
 
-// 4. Donations Store
-const donations = [
-  { id: 1, donor_name: 'Rohan Gupta', donor_email: 'rohan.g@example.com', amount: 2500, cause: 'Girls Education', created_at: new Date('2026-03-02T11:00:00Z').toISOString() },
-  { id: 2, donor_name: 'Sneha Kulkarni', donor_email: 'sneha.k@example.com', amount: 5000, cause: 'Child Nutrition', created_at: new Date('2026-03-06T16:20:00Z').toISOString() },
-  { id: 3, donor_name: 'Aarav Mehta', donor_email: 'aarav@example.com', amount: 1000, cause: 'Elderly Care', created_at: new Date('2026-03-08T08:45:00Z').toISOString() }
-];
-
-// 5. About Us Dynamic Content Store
-const aboutContent = {
-  storyText: 'Founded in 2015, our journey started with a small group of passionate volunteers addressing local community issues. Over the years, we have grown into a fully dedicated NGO, reaching thousands of individuals across multiple regions and driving lasting social change.',
-  storyImage: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80',
-  values: [
-    { id: 1, name: 'Integrity', description: 'Operating transparently and responsibly in all actions.' },
-    { id: 2, name: 'Respect', description: 'Valuing the diversity and dignity of every individual.' },
-    { id: 3, name: 'Empathy', description: 'Understanding and addressing the challenges faced by our communities.' }
-  ],
-  programs: [
-    { id: 1, name: 'Education & Child Support', description: 'Providing school supplies, scholarships, and free tutoring.' },
-    { id: 2, name: 'Health & Nutrition', description: 'Organizing regular free health checkup camps and clean water distribution.' },
-    { id: 3, name: 'Welfare & Development', description: 'Offering skill development and vocational training for women.' }
-  ],
-  team: [
-    {
-      id: 1,
-      name: 'John Doe',
-      designation: 'Founder & Executive Director',
-      bio: 'John has over 12 years of experience managing non-profit organizations and overseeing community welfare projects globally.'
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      designation: 'Program Coordinator',
-      bio: 'Jane coordinates field operations, ensuring all resources reach the targeted communities efficiently.'
-    }
-  ]
-};
-
-// 6. Media Store
-const mediaData = {
-  pressReleases: [
-    { id: 1, title: 'NGO Launched Digital Classrooms Initiative', date: '2026-01-15', description: 'Supporting underprivileged children with tablets and interactive multimedia learning kits in 15 rural schools.' },
-    { id: 2, title: 'Annual Healthcare Camp Treats 5,000+ Villagers', date: '2026-02-20', description: 'Free cardiology, dental, and general diagnostic camps conducted with partner medical teams.' }
-  ],
-  mediaCoverage: [
-    { id: 1, title: 'National Daily: The Grassroots Movement Transforming Education', url: 'https://example.com/press/education-feature' },
-    { id: 2, title: 'Social Impact Awards 2025: Best Community Outreach', url: 'https://example.com/awards/ngo-spotlight' }
-  ],
-  galleryImages: [
-    { id: 1, url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80' },
-    { id: 2, url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80' },
-    { id: 3, url: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=600&q=80' },
-    { id: 4, url: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=600&q=80' }
-  ]
-};
-
-// 7. Projects Store
-const projectsData = [
-  {
-    id: 1,
-    title: 'Digital Classrooms for Rural Girls',
-    description: 'Providing solar-powered digital tablets and certified educational curricula to primary schools.',
-    status: 'Ongoing',
-    startDate: '2026-01-10',
-    endDate: '2026-08-15',
-    location: 'Community Center Alpha, Pune',
-    imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    id: 2,
-    title: 'Clean Drinking Water Filtration Project',
-    description: 'Installation of high-capacity RO filtration plants delivering 20,000 liters of safe drinking water daily.',
-    status: 'Completed',
-    startDate: '2025-03-01',
-    endDate: '2025-11-20',
-    location: 'Rural Sector South, Nashik',
-    imageUrl: 'https://images.unsplash.com/photo-1541252260730-0412e8e2108e?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    id: 3,
-    title: 'Mobile Health Clinics for Senior Citizens',
-    description: 'Scheduled weekly wellness visits with medical supplies, free diagnostic kits, and geriatric care.',
-    status: 'Upcoming',
-    startDate: '2026-10-01',
-    endDate: '2027-02-28',
-    location: 'Metro Suburbs, Mumbai',
-    imageUrl: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=600&q=80'
+  destroy(id, callback) {
+    try { db.prepare('DELETE FROM sessions WHERE session_id = ?').run(id); callback(null); } catch (err) { callback(err); }
   }
-];
 
-// Seed default administrator user
-async function seedDefaultUsers() {
-  const adminHash = await bcrypt.hash('admin123', 10);
-  users.push({
-    user_id: 1,
-    full_name: 'Administrator',
-    email: 'admin@ngo.org',
-    password_hash: adminHash,
-    role: 'Admin',
-    status: 'active',
-    created_at: new Date().toISOString()
-  });
-  console.log('[AI Studio] Initialized mock database with demo user (admin@ngo.org / admin123)');
+  touch(id, sessionData, callback) {
+    try {
+      const expiresAt = sessionData.cookie && sessionData.cookie.expires ? new Date(sessionData.cookie.expires).getTime() : null;
+      db.prepare('UPDATE sessions SET expires_at = ? WHERE session_id = ?').run(expiresAt, id);
+      callback(null);
+    } catch (err) { callback(err); }
+  }
 }
-seedDefaultUsers();
 
-// ==========================================
-// 1. AUTHENTICATION & USERS APIS
-// ==========================================
+function audit(req, action, resource, resourceId = null) {
+  db.prepare('INSERT INTO audit_logs (user_id, action, resource, resource_id, created_at) VALUES (?, ?, ?, ?, ?)').run(req.session.user.user_id, action, resource, resourceId, now());
+}
 
-// User Registration
-app.post('/api/register', async (req, res) => {
-  const { full_name, email, password, role } = req.body;
+function adminOnly(req, res, next) {
+  if (!req.session.user) return error(res, 401, 'Authentication required.');
+  if (req.session.user.role !== 'Admin') return error(res, 403, 'Administrator access required.');
+  next();
+}
 
-  if (!full_name || !email || !password || !role) {
-    return res.status(400).json({ message: "All fields (Name, Email, Password, Role) are required." });
+function seedAdmin() {
+  if (db.prepare('SELECT user_id FROM users WHERE email = ?').get('admin@ngo.org')) return;
+  db.prepare('INSERT INTO users (full_name, email, password_hash, role, status, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+    .run('Administrator', 'admin@ngo.org', bcrypt.hashSync(adminPassword, 12), 'Admin', 'active', now());
+  if (!production) console.warn('Development admin created: admin@ngo.org. Set ADMIN_PASSWORD before deployment.');
+}
+seedAdmin();
+
+app.disable('x-powered-by');
+app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use((req, res, next) => {
+  const allowedOrigin = process.env.ALLOWED_ORIGIN;
+  if (allowedOrigin && req.headers.origin && req.headers.origin !== allowedOrigin) return error(res, 403, 'Origin is not allowed.');
+  if (allowedOrigin && req.headers.origin) {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Vary', 'Origin');
   }
+  next();
+});
+app.use(express.json({ limit: process.env.BODY_LIMIT || '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: process.env.BODY_LIMIT || '100kb' }));
+app.use(session({
+  store: new SQLiteSessionStore(),
+  secret: process.env.SESSION_SECRET || (production ? undefined : 'local-development-session-secret'),
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, sameSite: 'lax', secure: production, maxAge: 8 * 60 * 60 * 1000 }
+}));
+app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 200, standardHeaders: 'draft-8', legacyHeaders: false }));
+const authLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false });
 
+app.get('/healthz', (req, res) => res.json({ status: 'ok', database: 'sqlite', time: now() }));
+
+app.post('/api/register', authLimit, async (req, res, next) => {
+  if (!required(req.body, ['full_name', 'email', 'password', 'role'])) return error(res, 400, 'All fields (Name, Email, Password, Role) are required.');
+  const fullName = clean(req.body.full_name);
+  const userEmail = email(req.body.email);
+  const password = String(req.body.password);
+  if (fullName.length > 120 || userEmail.length > 254 || password.length < 8 || password.length > 128) return error(res, 400, 'Use a valid name and email, and a password between 8 and 128 characters.');
   try {
-    const existingUser = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
-    if (existingUser) {
-      return res.status(400).json({ message: "Email is already registered." });
-    }
-
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
-
-    const newUser = {
-      user_id: users.length + 1,
-      full_name: full_name.trim(),
-      email: email.trim().toLowerCase(),
-      password_hash: passwordHash,
-      role: role.trim(),
-      status: 'active',
-      created_at: new Date().toISOString()
-    };
-    users.push(newUser);
-
-    return res.status(201).json({
-      message: "User registered successfully!",
-      user: {
-        user_id: newUser.user_id,
-        full_name: newUser.full_name,
-        email: newUser.email,
-        role: newUser.role,
-        status: newUser.status
-      }
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    return res.status(500).json({ message: "Internal server error." });
+    const role = clean(req.body.role) === 'Admin' ? 'Member' : clean(req.body.role) || 'Member';
+    const result = db.prepare('INSERT INTO users (full_name, email, password_hash, role, status, created_at) VALUES (?, ?, ?, ?, ?, ?)').run(fullName, userEmail, await bcrypt.hash(password, 12), role, 'active', now());
+    const user = db.prepare('SELECT * FROM users WHERE user_id = ?').get(result.lastInsertRowid);
+    res.status(201).json({ message: 'User registered successfully!', user: userView(user) });
+  } catch (err) {
+    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') return error(res, 400, 'Email is already registered.');
+    next(err);
   }
 });
 
-// User Login
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required." });
-  }
-
+app.post('/api/login', authLimit, async (req, res, next) => {
+  if (!required(req.body, ['email', 'password'])) return error(res, 400, 'Email and password are required.');
   try {
-    const user = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password." });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password." });
-    }
-
-    return res.status(200).json({
-      message: "Login successful!",
-      user: {
-        user_id: user.user_id,
-        full_name: user.full_name,
-        email: user.email,
-        role: user.role,
-        status: user.status
-      }
+    const user = db.prepare('SELECT * FROM users WHERE email = ? AND status = ?').get(email(req.body.email), 'active');
+    if (!user || !(await bcrypt.compare(String(req.body.password), user.password_hash))) return error(res, 401, 'Invalid email or password.');
+    req.session.regenerate(err => {
+      if (err) return next(err);
+      req.session.user = userView(user);
+      res.json({ message: 'Login successful!', user: req.session.user });
     });
-  } catch (error) {
-    console.error('Login error:', error);
-    return res.status(500).json({ message: "Internal server error." });
-  }
+  } catch (err) { next(err); }
 });
+app.post('/api/logout', (req, res, next) => req.session.destroy(err => err ? next(err) : (res.clearCookie('connect.sid'), res.json({ message: 'Logged out successfully.' }))));
+app.get('/api/me', (req, res) => res.json({ user: req.session.user || null }));
+app.get('/api/users', adminOnly, (req, res) => res.json({ users: db.prepare('SELECT user_id, full_name, email, role, status, created_at FROM users ORDER BY user_id DESC').all() }));
 
-// Get registered users (for admin panel)
-app.get('/api/users', (req, res) => {
-  const sanitized = users.map(({ password_hash, ...rest }) => rest);
-  res.json({ users: sanitized });
-});
-
-// ==========================================
-// 2. VOLUNTEERS API (JOIN US)
-// ==========================================
-
-app.get('/api/volunteers', (req, res) => {
-  res.json({ volunteers });
-});
-
+app.get('/api/volunteers', adminOnly, (req, res) => res.json({ volunteers: db.prepare('SELECT * FROM volunteers ORDER BY created_at DESC').all() }));
 app.post('/api/volunteers', (req, res) => {
-  const { full_name, email, phone, message } = req.body;
-
-  if (!full_name || !email || !phone || !message) {
-    return res.status(400).json({ message: "All fields are required to apply as a volunteer." });
-  }
-
-  const newVolunteer = {
-    id: Date.now(),
-    full_name: full_name.trim(),
-    email: email.trim().toLowerCase(),
-    phone: phone.trim(),
-    message: message.trim(),
-    status: 'Pending Review',
-    created_at: new Date().toISOString()
-  };
-
-  volunteers.push(newVolunteer);
-  res.status(201).json({
-    message: "Thank you for applying to volunteer! Our team will contact you shortly.",
-    volunteer: newVolunteer
-  });
+  if (!required(req.body, ['full_name', 'email', 'phone', 'message'])) return error(res, 400, 'All fields are required to apply as a volunteer.');
+  const result = db.prepare("INSERT INTO volunteers (full_name, email, phone, message, status, created_at) VALUES (?, ?, ?, ?, 'Pending Review', ?)").run(clean(req.body.full_name), email(req.body.email), clean(req.body.phone), clean(req.body.message), now());
+  res.status(201).json({ message: 'Thank you for applying to volunteer! Our team will contact you shortly.', volunteer: db.prepare('SELECT * FROM volunteers WHERE id = ?').get(result.lastInsertRowid) });
 });
-
-// ==========================================
-// 3. CONTACT INQUIRIES API
-// ==========================================
-
-app.get('/api/contact', (req, res) => {
-  res.json({ inquiries });
+app.patch('/api/volunteers/:id/status', adminOnly, (req, res) => {
+  const status = clean(req.body.status);
+  if (!['Pending Review', 'Approved', 'Rejected'].includes(status)) return error(res, 400, 'Invalid volunteer status.');
+  const result = db.prepare('UPDATE volunteers SET status = ? WHERE id = ?').run(status, Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Volunteer not found.');
+  audit(req, 'status_update', 'volunteer', req.params.id);
+  res.json({ message: 'Volunteer status updated.' });
 });
-
+app.get('/api/contact', adminOnly, (req, res) => res.json({ inquiries: db.prepare('SELECT * FROM inquiries ORDER BY created_at DESC').all() }));
 app.post('/api/contact', (req, res) => {
-  const { name, email, phone, subject, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: "Name, email, and message are required." });
-  }
-
-  const newInquiry = {
-    id: Date.now(),
-    name: name.trim(),
-    email: email.trim().toLowerCase(),
-    phone: (phone || '').trim(),
-    subject: (subject || 'General Inquiry').trim(),
-    message: message.trim(),
-    created_at: new Date().toISOString()
-  };
-
-  inquiries.push(newInquiry);
-  res.status(201).json({
-    message: "Your message has been sent successfully. We will be in touch soon!",
-    inquiry: newInquiry
-  });
+  if (!required(req.body, ['name', 'email', 'message'])) return error(res, 400, 'Name, email, and message are required.');
+  const result = db.prepare('INSERT INTO inquiries (name, email, phone, subject, message, created_at) VALUES (?, ?, ?, ?, ?, ?)').run(clean(req.body.name), email(req.body.email), clean(req.body.phone), clean(req.body.subject) || 'General Inquiry', clean(req.body.message), now());
+  res.status(201).json({ message: 'Your message has been sent successfully. We will be in touch soon!', inquiry: db.prepare('SELECT * FROM inquiries WHERE id = ?').get(result.lastInsertRowid) });
 });
-
-// ==========================================
-// 4. DONATIONS & IMPACT STATS API
-// ==========================================
 
 app.get('/api/donations', (req, res) => {
-  const totalAmount = donations.reduce((sum, d) => sum + Number(d.amount), 0);
-  res.json({
-    donations,
-    totalCount: donations.length,
-    totalAmount
-  });
+  const donations = db.prepare("SELECT id, donor_name, amount, cause, status, created_at FROM donations WHERE status IN ('paid', 'mock_paid') ORDER BY created_at DESC").all();
+  const totalAmount = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status IN ('paid', 'mock_paid')").get().total;
+  res.json({ donations, totalCount: donations.length, totalAmount });
 });
-
 app.post('/api/donations', (req, res) => {
-  const { donor_name, donor_email, amount, cause } = req.body;
-
-  if (!donor_name || !donor_email || !amount) {
-    return res.status(400).json({ message: "Name, email, and amount are required." });
-  }
-
-  const parsedAmount = parseFloat(amount);
-  if (isNaN(parsedAmount) || parsedAmount <= 0) {
-    return res.status(400).json({ message: "Please enter a valid donation amount." });
-  }
-
-  const newDonation = {
-    id: Date.now(),
-    donor_name: donor_name.trim(),
-    donor_email: donor_email.trim().toLowerCase(),
-    amount: parsedAmount,
-    cause: cause || 'General Fund',
-    created_at: new Date().toISOString()
-  };
-
-  donations.push(newDonation);
-  const totalAmount = donations.reduce((sum, d) => sum + Number(d.amount), 0);
-
-  res.status(201).json({
-    message: `Thank you for your generous donation of ₹${parsedAmount}! Your tax receipt has been generated.`,
-    donation: newDonation,
-    totalRaised: totalAmount
-  });
+  if (!required(req.body, ['donor_name', 'donor_email', 'amount'])) return error(res, 400, 'Name, email, and amount are required.');
+  const amount = Number(req.body.amount);
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 10000000) return error(res, 400, 'Please enter a valid donation amount.');
+  const result = db.prepare("INSERT INTO donations (donor_name, donor_email, amount, cause, status, created_at) VALUES (?, ?, ?, ?, 'mock_paid', ?)").run(clean(req.body.donor_name), email(req.body.donor_email), amount, clean(req.body.cause) || 'General Fund', now());
+  const donation = db.prepare('SELECT id, donor_name, amount, cause, status, created_at FROM donations WHERE id = ?').get(result.lastInsertRowid);
+  const totalRaised = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status IN ('paid', 'mock_paid')").get().total;
+  res.status(201).json({ message: 'Donation recorded in development mode. No payment was processed.', donation, totalRaised });
 });
-
-// Overall NGO Live Stats
 app.get('/api/stats', (req, res) => {
-  const totalDonationsAmount = donations.reduce((sum, d) => sum + Number(d.amount), 0);
-  res.json({
-    campaignsHosted: 3067,
-    studentsReceived: '10,000+',
-    patientsTreated: '50,000+',
-    activeVolunteers: volunteers.length + 2000,
-    totalRaised: totalDonationsAmount + 50000,
-    registeredUsersCount: users.length
+  const total = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM donations WHERE status IN ('paid', 'mock_paid')").get().total;
+  res.json({ campaignsHosted: 3067, studentsReceived: '10,000+', patientsTreated: '50,000+', activeVolunteers: db.prepare('SELECT COUNT(*) AS count FROM volunteers').get().count + 2000, totalRaised: total + 50000, registeredUsersCount: db.prepare('SELECT COUNT(*) AS count FROM users').get().count });
+});
+
+app.get('/api/about', (req, res) => res.json({
+  ...db.prepare('SELECT story_text AS storyText, story_image AS storyImage FROM about_story WHERE id = 1').get(),
+  values: db.prepare('SELECT id, name, description FROM about_values ORDER BY id').all(),
+  programs: db.prepare('SELECT id, name, description FROM about_programs ORDER BY id').all(),
+  team: db.prepare('SELECT id, name, designation, bio FROM about_team ORDER BY id').all()
+}));
+app.put('/api/about/story', adminOnly, (req, res) => {
+  db.prepare("UPDATE about_story SET story_text = COALESCE(NULLIF(?, ''), story_text), story_image = COALESCE(NULLIF(?, ''), story_image) WHERE id = 1").run(clean(req.body.storyText), clean(req.body.storyImage));
+  audit(req, 'update', 'about_story');
+  res.json({ message: 'Story section updated successfully!' });
+});
+
+function aboutCrud(table, label) {
+  app.post(`/api/about/${table}`, adminOnly, (req, res) => {
+    if (!clean(req.body.name)) return error(res, 400, `${label} name is required`);
+    const description = clean(req.body.description) || `Targeted ${label.toLowerCase()} providing resources and direct field assistance.`;
+    const result = db.prepare(`INSERT INTO about_${table} (name, description) VALUES (?, ?)`).run(clean(req.body.name), description);
+    audit(req, 'create', table, result.lastInsertRowid);
+    res.status(201).json({ message: `${label} added successfully!`, [table === 'values' ? 'value' : 'program']: { id: result.lastInsertRowid, name: clean(req.body.name), description } });
   });
+  app.put(`/api/about/${table}/:id`, adminOnly, (req, res) => {
+    const result = db.prepare(`UPDATE about_${table} SET name = COALESCE(NULLIF(?, ''), name), description = COALESCE(NULLIF(?, ''), description) WHERE id = ?`).run(clean(req.body.name), clean(req.body.description), Number(req.params.id));
+    if (!result.changes) return error(res, 404, `${label} not found`);
+    audit(req, 'update', table, req.params.id);
+    res.json({ message: `${label} updated successfully` });
+  });
+  app.delete(`/api/about/${table}/:id`, adminOnly, (req, res) => {
+    const result = db.prepare(`DELETE FROM about_${table} WHERE id = ?`).run(Number(req.params.id));
+    if (!result.changes) return error(res, 404, `${label} not found`);
+    audit(req, 'delete', table, req.params.id);
+    res.json({ message: `${label} deleted successfully` });
+  });
+}
+aboutCrud('values', 'Core value');
+aboutCrud('programs', 'Program');
+app.post('/api/about/team', adminOnly, (req, res) => {
+  if (!required(req.body, ['name', 'designation'])) return error(res, 400, 'Name and designation are required');
+  const bio = clean(req.body.bio) || 'Dedicated team member driving grassroots social welfare and community outreach.';
+  const result = db.prepare('INSERT INTO about_team (name, designation, bio) VALUES (?, ?, ?)').run(clean(req.body.name), clean(req.body.designation), bio);
+  audit(req, 'create', 'team', result.lastInsertRowid);
+  res.status(201).json({ message: 'Team member added successfully!', member: { id: result.lastInsertRowid, name: clean(req.body.name), designation: clean(req.body.designation), bio } });
+});
+app.put('/api/about/team/:id', adminOnly, (req, res) => {
+  const result = db.prepare("UPDATE about_team SET name = COALESCE(NULLIF(?, ''), name), designation = COALESCE(NULLIF(?, ''), designation), bio = COALESCE(NULLIF(?, ''), bio) WHERE id = ?").run(clean(req.body.name), clean(req.body.designation), clean(req.body.bio), Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Team member not found');
+  audit(req, 'update', 'team', req.params.id);
+  res.json({ message: 'Team member updated successfully' });
+});
+app.delete('/api/about/team/:id', adminOnly, (req, res) => {
+  const result = db.prepare('DELETE FROM about_team WHERE id = ?').run(Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Team member not found');
+  audit(req, 'delete', 'team', req.params.id);
+  res.json({ message: 'Team member deleted' });
 });
 
-// ==========================================
-// 5. ABOUT US DYNAMIC CONTENT API
-// ==========================================
-
-app.get('/api/about', (req, res) => {
-  res.json(aboutContent);
+app.get('/api/media', (req, res) => res.json({
+  pressReleases: db.prepare('SELECT id, title, date, description FROM press_releases ORDER BY date DESC, id DESC').all(),
+  mediaCoverage: db.prepare('SELECT id, title, url FROM media_coverage ORDER BY id DESC').all(),
+  galleryImages: db.prepare('SELECT id, url, caption FROM gallery_images ORDER BY id DESC').all()
+}));
+app.post('/api/media/press', adminOnly, (req, res) => {
+  if (!required(req.body, ['title', 'date', 'description'])) return error(res, 400, 'Title, date, and description are required');
+  const result = db.prepare('INSERT INTO press_releases (title, date, description) VALUES (?, ?, ?)').run(clean(req.body.title), clean(req.body.date), clean(req.body.description));
+  audit(req, 'create', 'press_release', result.lastInsertRowid);
+  res.status(201).json({ message: 'Press release published successfully', item: { id: result.lastInsertRowid, title: clean(req.body.title), date: clean(req.body.date), description: clean(req.body.description) } });
+});
+app.delete('/api/media/press/:id', adminOnly, (req, res) => {
+  const result = db.prepare('DELETE FROM press_releases WHERE id = ?').run(Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Press release not found');
+  audit(req, 'delete', 'press_release', req.params.id);
+  res.json({ message: 'Press release removed' });
+});
+app.post('/api/media/coverage', adminOnly, (req, res) => {
+  if (!required(req.body, ['title', 'url'])) return error(res, 400, 'Title and URL are required');
+  const result = db.prepare('INSERT INTO media_coverage (title, url) VALUES (?, ?)').run(clean(req.body.title), clean(req.body.url));
+  audit(req, 'create', 'media_coverage', result.lastInsertRowid);
+  res.status(201).json({ message: 'Media coverage entry added', item: { id: result.lastInsertRowid, title: clean(req.body.title), url: clean(req.body.url) } });
+});
+app.delete('/api/media/coverage/:id', adminOnly, (req, res) => {
+  const result = db.prepare('DELETE FROM media_coverage WHERE id = ?').run(Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Media coverage not found');
+  audit(req, 'delete', 'media_coverage', req.params.id);
+  res.json({ message: 'Media coverage entry removed' });
+});
+app.post('/api/media/gallery', adminOnly, (req, res) => {
+  if (!clean(req.body.url)) return error(res, 400, 'Image URL is required');
+  const result = db.prepare('INSERT INTO gallery_images (url, caption) VALUES (?, ?)').run(clean(req.body.url), clean(req.body.caption));
+  audit(req, 'create', 'gallery_image', result.lastInsertRowid);
+  res.status(201).json({ message: 'Gallery image uploaded successfully', item: { id: result.lastInsertRowid, url: clean(req.body.url), caption: clean(req.body.caption) } });
+});
+app.delete('/api/media/gallery/:id', adminOnly, (req, res) => {
+  const result = db.prepare('DELETE FROM gallery_images WHERE id = ?').run(Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Gallery image not found');
+  audit(req, 'delete', 'gallery_image', req.params.id);
+  res.json({ message: 'Gallery image removed' });
 });
 
-app.put('/api/about/story', (req, res) => {
-  const { storyText, storyImage } = req.body;
-  if (storyText) aboutContent.storyText = storyText;
-  if (storyImage) aboutContent.storyImage = storyImage;
-  res.json({ message: "Story section updated successfully!", aboutContent });
+app.get('/api/projects', (req, res) => res.json({ projects: db.prepare('SELECT * FROM projects ORDER BY id DESC').all().map(projectView) }));
+app.post('/api/projects', adminOnly, (req, res) => {
+  if (!required(req.body, ['title', 'description'])) return error(res, 400, 'Title and description are required');
+  const values = [clean(req.body.title), clean(req.body.description), clean(req.body.status) || 'Ongoing', clean(req.body.startDate) || now().slice(0, 10), clean(req.body.endDate) || 'Ongoing', clean(req.body.location) || 'Pune, India', clean(req.body.imageUrl) || 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80'];
+  const result = db.prepare('INSERT INTO projects (title, description, status, start_date, end_date, location, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)').run(...values);
+  audit(req, 'create', 'project', result.lastInsertRowid);
+  res.status(201).json({ message: 'Project added successfully', project: projectView(db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid)) });
+});
+app.put('/api/projects/:id', adminOnly, (req, res) => {
+  const result = db.prepare("UPDATE projects SET title = COALESCE(NULLIF(?, ''), title), description = COALESCE(NULLIF(?, ''), description), status = COALESCE(NULLIF(?, ''), status), start_date = COALESCE(NULLIF(?, ''), start_date), end_date = COALESCE(NULLIF(?, ''), end_date), location = COALESCE(NULLIF(?, ''), location), image_url = COALESCE(NULLIF(?, ''), image_url) WHERE id = ?").run(clean(req.body.title), clean(req.body.description), clean(req.body.status), clean(req.body.startDate), clean(req.body.endDate), clean(req.body.location), clean(req.body.imageUrl), Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Project not found');
+  audit(req, 'update', 'project', req.params.id);
+  res.json({ message: 'Project updated successfully', project: projectView(db.prepare('SELECT * FROM projects WHERE id = ?').get(Number(req.params.id))) });
+});
+app.delete('/api/projects/:id', adminOnly, (req, res) => {
+  const result = db.prepare('DELETE FROM projects WHERE id = ?').run(Number(req.params.id));
+  if (!result.changes) return error(res, 404, 'Project not found');
+  audit(req, 'delete', 'project', req.params.id);
+  res.json({ message: 'Project removed' });
 });
 
-// Values CRUD
-app.post('/api/about/values', (req, res) => {
-  const { name, description } = req.body;
-  if (!name) return res.status(400).json({ message: "Value name is required" });
-  const val = {
-    id: Date.now(),
-    name: name.trim(),
-    description: (description || 'Promoting community integrity and service.').trim()
-  };
-  aboutContent.values.push(val);
-  res.status(201).json({ message: "Core value added successfully!", value: val, values: aboutContent.values });
-});
-
-app.put('/api/about/values/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const val = aboutContent.values.find(v => v.id === id);
-  if (!val) return res.status(404).json({ message: "Value not found" });
-  if (req.body.name) val.name = req.body.name;
-  if (req.body.description) val.description = req.body.description;
-  res.json({ message: "Value updated successfully", values: aboutContent.values });
-});
-
-app.delete('/api/about/values/:id', (req, res) => {
-  const id = Number(req.params.id);
-  aboutContent.values = aboutContent.values.filter(v => v.id !== id);
-  res.json({ message: "Core value removed", values: aboutContent.values });
-});
-
-// Programs CRUD
-app.post('/api/about/programs', (req, res) => {
-  const { name, description } = req.body;
-  if (!name) return res.status(400).json({ message: "Program name is required" });
-  const prog = {
-    id: Date.now(),
-    name: name.trim(),
-    description: (description || 'Targeted program providing resources and direct field assistance.').trim()
-  };
-  aboutContent.programs.push(prog);
-  res.status(201).json({ message: "Program added successfully!", program: prog, programs: aboutContent.programs });
-});
-
-app.put('/api/about/programs/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const prog = aboutContent.programs.find(p => p.id === id);
-  if (!prog) return res.status(404).json({ message: "Program not found" });
-  if (req.body.name) prog.name = req.body.name;
-  if (req.body.description) prog.description = req.body.description;
-  res.json({ message: "Program updated successfully", programs: aboutContent.programs });
-});
-
-app.delete('/api/about/programs/:id', (req, res) => {
-  const id = Number(req.params.id);
-  aboutContent.programs = aboutContent.programs.filter(p => p.id !== id);
-  res.json({ message: "Program deleted successfully", programs: aboutContent.programs });
-});
-
-// Team Members CRUD
-app.post('/api/about/team', (req, res) => {
-  const { name, designation, bio } = req.body;
-  if (!name || !designation) return res.status(400).json({ message: "Name and designation are required" });
-  const member = {
-    id: Date.now(),
-    name: name.trim(),
-    designation: designation.trim(),
-    bio: (bio || 'Dedicated team member driving grassroots social welfare and community outreach.').trim()
-  };
-  aboutContent.team.push(member);
-  res.status(201).json({ message: "Team member added successfully!", member, team: aboutContent.team });
-});
-
-app.put('/api/about/team/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const member = aboutContent.team.find(m => m.id === id);
-  if (!member) return res.status(404).json({ message: "Team member not found" });
-  if (req.body.name) member.name = req.body.name;
-  if (req.body.designation) member.designation = req.body.designation;
-  if (req.body.bio) member.bio = req.body.bio;
-  res.json({ message: "Team member updated successfully", team: aboutContent.team });
-});
-
-app.delete('/api/about/team/:id', (req, res) => {
-  const id = Number(req.params.id);
-  aboutContent.team = aboutContent.team.filter(m => m.id !== id);
-  res.json({ message: "Team member deleted", team: aboutContent.team });
-});
-
-// ==========================================
-// 6. MEDIA API (PRESS, COVERAGE, GALLERY)
-// ==========================================
-
-app.get('/api/media', (req, res) => {
-  res.json(mediaData);
-});
-
-app.post('/api/media/press', (req, res) => {
-  const { title, date, description } = req.body;
-  if (!title || !date || !description) return res.status(400).json({ message: "Title, date, and description are required" });
-  const item = { id: Date.now(), title: title.trim(), date, description: description.trim() };
-  mediaData.pressReleases.unshift(item);
-  res.status(201).json({ message: "Press release published successfully", item });
-});
-
-app.delete('/api/media/press/:id', (req, res) => {
-  const id = Number(req.params.id);
-  mediaData.pressReleases = mediaData.pressReleases.filter(i => i.id !== id);
-  res.json({ message: "Press release removed" });
-});
-
-app.post('/api/media/coverage', (req, res) => {
-  const { title, url } = req.body;
-  if (!title || !url) return res.status(400).json({ message: "Title and URL are required" });
-  const item = { id: Date.now(), title: title.trim(), url: url.trim() };
-  mediaData.mediaCoverage.unshift(item);
-  res.status(201).json({ message: "Media coverage entry added", item });
-});
-
-app.delete('/api/media/coverage/:id', (req, res) => {
-  const id = Number(req.params.id);
-  mediaData.mediaCoverage = mediaData.mediaCoverage.filter(i => i.id !== id);
-  res.json({ message: "Media coverage entry removed" });
-});
-
-app.post('/api/media/gallery', (req, res) => {
-  const { url } = req.body;
-  if (!url) return res.status(400).json({ message: "Image URL is required" });
-  const item = { id: Date.now(), url: url.trim() };
-  mediaData.galleryImages.unshift(item);
-  res.status(201).json({ message: "Gallery image uploaded successfully", item });
-});
-
-app.delete('/api/media/gallery/:id', (req, res) => {
-  const id = Number(req.params.id);
-  mediaData.galleryImages = mediaData.galleryImages.filter(i => i.id !== id);
-  res.json({ message: "Gallery image removed" });
-});
-
-// ==========================================
-// 7. PROJECTS API
-// ==========================================
-
-app.get('/api/projects', (req, res) => {
-  res.json({ projects: projectsData });
-});
-
-app.post('/api/projects', (req, res) => {
-  const { title, description, status, location, startDate, endDate, imageUrl } = req.body;
-  if (!title || !description) return res.status(400).json({ message: "Title and description are required" });
-  const newProject = {
-    id: Date.now(),
-    title: title.trim(),
-    description: description.trim(),
-    status: status || 'Ongoing',
-    location: location || 'Pune, India',
-    startDate: startDate || new Date().toISOString().split('T')[0],
-    endDate: endDate || 'Ongoing',
-    imageUrl: imageUrl || 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80'
-  };
-  projectsData.unshift(newProject);
-  res.status(201).json({ message: "Project added successfully", project: newProject });
-});
-
-// ==========================================
-// ROUTE ALIASES & STATIC SERVING
-// ==========================================
-
-const routeAliases = [
-  { paths: ['/', '/index', '/index.html', '/ngo', '/ngo.html'], target: 'index.html' },
-  { paths: ['/about', '/about.html', '/about%20us.html', '/about us.html'], target: 'about us.html' },
-  { paths: ['/campaign', '/campaign.html', '/compaign', '/compaign.html'], target: 'compaign.html' },
-  { paths: ['/contact', '/contact.html', '/contact-us.html', '/contact%20us.html', '/contact us.html'], target: 'contact us.html' },
-  { paths: ['/join', '/join.html', '/join-us.html', '/join%20us.html', '/join us.html', '/contact-join.html'], target: 'join us.html' },
-  { paths: ['/projects', '/projects.html', '/work', '/work.html'], target: 'projects.html' },
-  { paths: ['/features', '/features.html'], target: 'features.html' },
-  { paths: ['/media', '/media.html'], target: 'media.html' },
-  { paths: ['/donate', '/donate.html'], target: 'donate.html' },
-  { paths: ['/blog', '/blog.html'], target: 'blog.html' },
-  { paths: ['/login', '/login.html'], target: 'login.html' },
-  { paths: ['/register', '/register.html'], target: 'register.html' }
+const aliases = [
+  [['/', '/index', '/index.html', '/ngo', '/ngo.html'], 'index.html'],
+  [['/about', '/about.html', '/about%20us.html', '/about us.html'], 'about us.html'],
+  [['/campaign', '/campaign.html', '/compaign', '/compaign.html'], 'compaign.html'],
+  [['/contact', '/contact.html', '/contact-us.html', '/contact%20us.html', '/contact us.html'], 'contact us.html'],
+  [['/join', '/join.html', '/join-us.html', '/join%20us.html', '/join us.html', '/contact-join.html'], 'join us.html'],
+  [['/projects', '/projects.html', '/work', '/work.html'], 'projects.html'],
+  [['/features', '/features.html'], 'features.html'], [['/media', '/media.html'], 'media.html'],
+  [['/donate', '/donate.html'], 'donate.html'], [['/blog', '/blog.html'], 'blog.html'],
+  [['/login', '/login.html'], 'login.html'], [['/register', '/register.html'], 'register.html']
 ];
-
-routeAliases.forEach(route => {
-  route.paths.forEach(p => {
-    app.get(p, (req, res) => {
-      res.sendFile(path.join(__dirname, route.target));
-    });
-  });
-});
-
-// Serve static assets from project root
+aliases.forEach(([paths, target]) => paths.forEach(route => app.get(route, (req, res) => res.sendFile(path.join(__dirname, target)))));
 app.use(express.static(__dirname));
-
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`NGO Portal Server running at http://0.0.0.0:${PORT}`);
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') return error(res, 413, 'Request body is too large.');
+  console.error(`${req.method} ${req.path}:`, err.message);
+  if (res.headersSent) return next(err);
+  error(res, 500, 'Internal server error.');
 });
 
+if (require.main === module) {
+  const server = app.listen(PORT, '0.0.0.0', () => console.log(`NGO Portal Server running at http://0.0.0.0:${PORT}`));
+  const shutdown = () => server.close(() => db.close());
+  process.once('SIGINT', shutdown);
+  process.once('SIGTERM', shutdown);
+}
+module.exports = app;
