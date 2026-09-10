@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: login-registration-project
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: FRONTEND_URL
+        sync: false

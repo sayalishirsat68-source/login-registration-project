@@ -65,6 +65,18 @@ ADMIN_PASSWORD=<strong-admin-password>
 
 SQLite data on serverless hosting is not durable across deployments or instance changes. Use a managed database before production traffic, even though SQLite remains suitable for local development.
 
+## Render deployment
+
+This repository currently uses the root-level Express entry point. In Render, set:
+
+```text
+Build Command: npm install
+Start Command: npm start
+Health Check Path: /healthz
+```
+
+Do not use `node backend/server.js` unless the repository has actually been migrated to that directory layout. The included `render.yaml` contains the same settings. Configure `NODE_ENV`, `SESSION_SECRET`, `ADMIN_PASSWORD`, and `FRONTEND_URL` as Render environment variables.
+
 ## Project context
 
 - [decisions.md](decisions.md): technical and product decisions.

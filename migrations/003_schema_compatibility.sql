@@ -1,0 +1,1 @@
+-- Donation verification columns are created by database.js and repaired at startup for legacy databases.
