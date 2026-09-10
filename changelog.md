@@ -11,11 +11,13 @@ All notable project changes are recorded here in reverse chronological order. Da
 - Added server-side SQLite sessions, admin authorization, logout invalidation, API hardening, health checks, and smoke tests.
 - Added project update and delete endpoints and volunteer status updates.
 - Added local environment configuration for database, sessions, admin credentials, CORS, proxy, and request limits.
+- Added `vercel.json` to deploy the Express server without requiring a `public` output directory.
 
 ### Changed
 
 - Linked the detailed phase plan from `memory.md`.
 - Updated phase statuses to reflect verified implementation and remaining external blockers.
+- Documented Vercel environment variables and the SQLite serverless persistence limitation.
 
 ### Fixed
 
