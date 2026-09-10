@@ -2,15 +2,15 @@
   "name": "login-registration-project",
   "version": "1.0.0",
   "description": "NGO web portal with login and registration system",
-  "main": "server.js",
+  "main": "backend/server.js",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js",
-    "build": "node --check server.js && node --check database.js",
+    "dev": "node backend/server.js",
+    "start": "node backend/server.js",
+    "build": "node --check backend/server.js && node --check backend/database.js",
     "test": "node test/api.smoke.js",
-    "db:migrate": "node scripts/migrate.js",
-    "db:backup": "node scripts/backup.js",
-    "db:restore": "node scripts/restore.js"
+    "db:migrate": "node backend/scripts/migrate.js",
+    "db:backup": "node backend/scripts/backup.js",
+    "db:restore": "node backend/scripts/restore.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

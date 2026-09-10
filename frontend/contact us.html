@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Hope Hand NGO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1f3a52;
+            padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 15px;
+            margin-bottom: 5px;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links .active {
+            color: #ff9f43;
+            font-weight: bold;
+        }
+
+        /* Hero Banner */
+        .contact-hero {
+            background: linear-gradient(rgba(31, 58, 82, 0.85), rgba(31, 58, 82, 0.85)), url('https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .contact-hero h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .contact-hero p {
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #e2e8f0;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            main { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; text-align: center; }
+            .nav-links { justify-content: center; margin-top: 15px; }
+        }
+
+        .page-section {
+            background: #fff;
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            color: #1f3a52;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .section-desc {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 550px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .contact-form input, .contact-form select, .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+            border-color: #1f3a52;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(31, 58, 82, 0.15);
+        }
+
+        .contact-form button {
+            background-color: #ff9f43;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background-color: #e68a2e;
+        }
+
+        /* Sidebar Info Cards */
+        .info-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid #1f3a52;
+        }
+
+        .info-card h3 {
+            color: #1f3a52;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        footer {
+            background: #1f3a52;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="logo">Hope Hand NGO</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about us.html">About Us</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="features.html">Features</a></li>
+                <li><a href="media.html">Media</a></li>
+                <li><a href="join us.html">Join Us</a></li>
+                <li><a href="compaign.html">Campaign</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact us.html" class="active">Contact Us</a></li>
+                <li class="auth-nav-item"><a href="login.html" style="background:#198754; color:#fff; padding:6px 12px; border-radius:4px;">Login / Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="contact-hero">
+        <h1>Get in Touch With Us</h1>
+        <p>Have questions about our initiatives, corporate partnerships, or donation receipts? Our team is here to assist you.</p>
+    </section>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Contact Form Section -->
+        <section class="page-section">
+            <h2 class="section-title">Send Us a Message</h2>
+            <p class="section-desc">Fill in your inquiry details below and our coordinator will respond within 24 hours.</p>
+
+            <div id="contact-alert" style="display: none; padding: 14px; border-radius: 6px; margin-bottom: 20px; font-weight: 500;"></div>
+
+            <form id="contact-form" class="contact-form" onsubmit="handleContactSubmit(event)">
+                <div class="form-row">
+                    <input type="text" id="contact-name" placeholder="Your Full Name *" required>
+                    <input type="email" id="contact-email" placeholder="Your Email Address *" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" id="contact-phone" placeholder="Phone Number (Optional)">
+                    <select id="contact-subject">
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="CSR & Corporate Partnership">CSR & Corporate Partnership</option>
+                        <option value="Donation Receipt & 80G Certificate">Donation Receipt & 80G Certificate</option>
+                        <option value="Volunteer Programs">Volunteer Programs</option>
+                        <option value="Media & Press Inquiry">Media & Press Inquiry</option>
+                    </select>
+                </div>
+                <textarea id="contact-message" placeholder="Your Message or Inquiry Details *" rows="6" required></textarea>
+                <button type="submit" id="contact-btn">Send Message</button>
+            </form>
+        </section>
+
+        <!-- Sidebar Info -->
+        <aside class="info-sidebar">
+            <div class="info-card">
+                <h3>📍 Head Office</h3>
+                <p><strong>Udaan & Hope Hand Foundation</strong></p>
+                <p>Near Sinnar Bus Stand, Sinnar, Nashik, Maharashtra - 422103</p>
+            </div>
+
+            <div class="info-card" style="border-left-color: #ff9f43;">
+                <h3>📞 Call & Email</h3>
+                <p><strong>General Support:</strong> +91 98765 43210</p>
+                <p><strong>Email:</strong> contact@hopehand.org</p>
+                <p><strong>CSR Desk:</strong> csr@hopehand.org</p>
+            </div>
+
+            <div class="info-card">
+                <h3>⏰ Working Hours</h3>
+                <p><strong>Monday – Friday:</strong> 9:00 AM – 6:00 PM</p>
+                <p><strong>Saturday:</strong> 10:00 AM – 2:00 PM</p>
+                <p><strong>Sunday:</strong> Field volunteers on-duty</p>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        &copy; 2026 Hope Hand NGO & Udaan Foundation. All rights reserved.
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user) {
+                if (user.full_name) document.getElementById('contact-name').value = user.full_name;
+                if (user.email) document.getElementById('contact-email').value = user.email;
+            }
+        });
+
+        async function handleContactSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('contact-btn');
+            const alertBox = document.getElementById('contact-alert');
+
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById('contact-message').value.trim();
+
+            btn.disabled = true;
+            btn.textContent = 'Sending Message...';
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, subject, message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alertBox.style.display = 'block';
+                    alertBox.style.backgroundColor = '#d1fae5';
+                    alertBox.style.color = '#065f46';
+                    alertBox.style.border = '1px solid #a7f3d0';
+                    alertBox.innerHTML = `
+                        <strong>Message Sent!</strong> ${data.message}<br>
+                        <span style="font-size: 13px; color: #047857;">Inquiry ID: #${data.inquiry.id} | Subject: ${data.inquiry.subject}</span>
+                    `;
+                    showToast('Message sent successfully!');
+                    document.getElementById('contact-form').reset();
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.style.backgroundColor = '#fee2e2';
+                    alertBox.style.color = '#991b1b';
+                    alertBox.style.border = '1px solid #fecaca';
+                    alertBox.textContent = data.message || 'Error sending message.';
+                    showToast(data.message || 'Error sending message', 'error');
+                }
+            } catch (err) {
+                alertBox.style.display = 'block';
+                alertBox.style.backgroundColor = '#fee2e2';
+                alertBox.style.color = '#991b1b';
+                alertBox.style.border = '1px solid #fecaca';
+                alertBox.textContent = 'Network error sending inquiry to server.';
+                showToast('Network error connecting to backend', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+            }
+        }
+    </script>
+</body>
+</html>

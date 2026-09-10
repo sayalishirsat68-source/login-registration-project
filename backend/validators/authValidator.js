@@ -2,11 +2,11 @@ function normalizeEmail(value) {
   return String(value || '').trim().toLowerCase();
 }
 
-function validateRegistration(body) {
-  const fullName = String(body.full_name || '').trim();
-  const email = normalizeEmail(body.email);
+function validateRegistration(body = {}) {
+  const fullName = String(body.full_name || body.fullName || '').trim();
+  const email = normalizeEmail(body.email || body.userEmail || '');
   const password = String(body.password || '');
-  const confirmPassword = String(body.confirm_password || '');
+  const confirmPassword = String(body.confirm_password ?? body.confirmPassword ?? '');
   const role = String(body.role || '').trim();
 
   const errors = {};
@@ -21,8 +21,10 @@ function validateRegistration(body) {
   else if (password.length < 8) errors.password = 'Password must be at least 8 characters long.';
   else if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) errors.password = 'Password must contain at least one uppercase letter and one number.';
 
-  if (!confirmPassword) errors.confirm_password = 'Please confirm your password.';
-  else if (password !== confirmPassword) errors.confirm_password = 'Passwords do not match.';
+  if (Object.prototype.hasOwnProperty.call(body, 'confirm_password') || Object.prototype.hasOwnProperty.call(body, 'confirmPassword')) {
+    if (!confirmPassword) errors.confirm_password = 'Please confirm your password.';
+    else if (password !== confirmPassword) errors.confirm_password = 'Passwords do not match.';
+  }
 
   if (!role) errors.role = 'Role is required.';
   else if (!['Volunteer', 'Donor', 'Member', 'Admin'].includes(role)) errors.role = 'Invalid role selected.';

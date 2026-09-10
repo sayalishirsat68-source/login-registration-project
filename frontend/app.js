@@ -3,7 +3,7 @@
  * Handles user authentication state, navigation menu synchronization, and notification banners
  */
 
-const apiBaseUrl = String(window.NGO_API_URL || '').replace(/\/$/, '');
+const apiBaseUrl = String(window.NGO_API_URL || window.VITE_API_URL || '').replace(/\/$/, '');
 const nativeFetch = window.fetch.bind(window);
 window.fetch = (input, options = {}) => {
   const requestUrl = typeof input === 'string' ? input : input.url;
@@ -12,6 +12,21 @@ window.fetch = (input, options = {}) => {
   const requestOptions = { ...options, credentials: 'include' };
   return nativeFetch(`${apiBaseUrl}${requestUrl}`, requestOptions);
 };
+
+function protectedRouteGuard({ redirectTo = 'login.html', allowedRoles = null } = {}) {
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = redirectTo;
+    return false;
+  }
+
+  if (allowedRoles && user.role && !allowedRoles.includes(user.role) && user.role !== 'Admin') {
+    window.location.href = redirectTo;
+    return false;
+  }
+
+  return true;
+}
 
 // Helper to get active user
 function getCurrentUser() {
@@ -147,7 +162,12 @@ function showToast(message, type = 'success') {
 }
 
 // Auto-run on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   updateNavAuthState();
-  bootstrapAuthState();
+  const authenticated = await bootstrapAuthState();
+
+  const currentPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  if (['login.html', 'register.html'].includes(currentPage) && authenticated) {
+    window.location.href = 'about us.html';
+  }
 });

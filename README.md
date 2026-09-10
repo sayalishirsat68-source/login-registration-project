@@ -13,13 +13,15 @@ npm run dev
 
 Open `http://localhost:3000`. The development seed administrator is `admin@ngo.org` with password `admin123`; set `ADMIN_PASSWORD` before any non-development deployment.
 
-The current application serves the static frontend and API from one Express process. To deploy them separately, serve the static pages from `frontend/`, set `window.NGO_API_URL` before loading `app.js`, and configure the backend `FRONTEND_URL` to the frontend origin. All API requests then use credentialed HTTP-only session cookies.
+The application uses secure server-side sessions rather than JWT for the existing architecture. The backend writes a session cookie with `httpOnly`, `sameSite`, and optional `secure` settings, and the frontend keeps the authenticated user in local storage only as UI state while the server remains the source of truth.
+
+The current application serves the static frontend and API from one Express process. To deploy them separately, serve the static pages from `frontend/`, set `window.NGO_API_URL` (or `window.VITE_API_URL`) before loading `app.js`, and configure the backend `FRONTEND_URL` to the frontend origin. All API requests then use credentialed HTTP-only session cookies.
 
 For a separated local deployment:
 
 1. Run the backend with `npm run dev`.
 2. Serve the `frontend/` directory with any static server on `http://localhost:5173`.
-3. Set `window.NGO_API_URL` to `http://localhost:3000` in the frontend host configuration.
+3. Set `window.NGO_API_URL` or `window.VITE_API_URL` to `http://localhost:3000` in the frontend host configuration.
 4. Set backend `FRONTEND_URL=http://localhost:5173`.
 
 ## Verification
@@ -47,11 +49,42 @@ Migrations are applied in numeric order from `migrations/` and recorded in `sche
 
 Copy `.env.example` to `.env` for local overrides. Production must provide `SESSION_SECRET` and `ADMIN_PASSWORD`; never commit `.env` or real credentials.
 
+Required environment variables:
+
+```text
+PORT=3000
+NODE_ENV=development
+DATA_DIR=./backend/data
+DB_PATH=./backend/data/ngo.sqlite
+SESSION_SECRET=replace-with-a-long-random-secret
+ADMIN_PASSWORD=replace-with-a-strong-admin-password
+FRONTEND_URL=http://localhost:5173
+VITE_API_URL=http://localhost:3000
+COOKIE_SAME_SITE=lax
+COOKIE_SECURE=false
+```
+
 `FRONTEND_URL` controls credentialed CORS. `COOKIE_SAME_SITE` and `COOKIE_SECURE` control the session cookie; use `COOKIE_SAME_SITE=none` and `COOKIE_SECURE=true` when the separately deployed frontend and backend are cross-site and served over HTTPS.
 
 ## Authentication architecture
 
 Frontend pages call the authentication API. The backend session middleware loads the authenticated user, `authMiddleware` rejects missing or inactive sessions, `roleMiddleware` enforces administrator permissions, and controllers validate input before database operations. Passwords are stored only as bcrypt hashes, and `/api/auth/me` returns safe user fields only.
+
+Flow:
+
+```text
+Frontend page
+  ↓
+Authentication API (`/api/login`, `/api/register`, `/api/logout`, `/api/auth/me`)
+  ↓
+Express backend
+  ↓
+Session-based auth middleware
+  ↓
+Role middleware (admin-only routes)
+  ↓
+SQLite user table
+```
 
 ## Vercel deployment
 

@@ -1,0 +1,837 @@
+.banner-placeholder {
+    width: 60%;
+    height: 450px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+.banner-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+}
+
+/*features*/
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7faf7;
+    color: #333;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+    width: 100%;
+    min-height: 75px;
+
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 15px 5%;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #218739;
+
+    white-space: nowrap;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #218739;
+    color: #ffffff;
+    font-size: 13px;
+    letter-spacing: 0;
+    vertical-align: middle;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    list-style: none;
+}
+
+.nav-links a {
+    color: #333;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #218739;
+}
+
+.nav-links a.active {
+    color: #218739;
+
+    font-weight: bold;
+
+    border-bottom: 2px solid #218739;
+
+    padding-bottom: 5px;
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.features-hero {
+
+    min-height: 400px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            rgba(24, 105, 47, 0.82),
+            rgba(24, 105, 47, 0.82)
+        ),
+        url("images/features-banner.jpg");
+
+    background-size: cover;
+
+    background-position: center;
+}
+
+.hero-content {
+    max-width: 800px;
+
+    padding: 30px;
+}
+
+.small-title {
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    color: #c9f3d1;
+}
+
+.hero-content h1 {
+    font-size: 52px;
+
+    margin: 12px 0 15px;
+}
+
+.hero-content p {
+    font-size: 19px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================
+   INTRO
+========================================= */
+
+.intro-section {
+    max-width: 850px;
+
+    margin: 70px auto;
+
+    padding: 0 25px;
+
+    text-align: center;
+}
+
+.section-label {
+    display: inline-block;
+
+    color: #218739;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+}
+
+.intro-section h2 {
+    font-size: 34px;
+
+    color: #222;
+
+    margin-bottom: 18px;
+}
+
+.intro-section p {
+    color: #666;
+
+    font-size: 17px;
+
+    line-height: 1.9;
+}
+
+
+/* =========================================
+   FEATURES SECTION
+========================================= */
+
+.features-section {
+    width: 90%;
+
+    max-width: 1200px;
+
+    margin: 0 auto 80px;
+}
+
+.section-heading {
+    text-align: center;
+
+    margin-bottom: 45px;
+}
+
+.section-heading h2 {
+    font-size: 34px;
+
+    color: #222;
+}
+
+
+/* =========================================
+   GRID
+========================================= */
+
+.features-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 25px;
+}
+
+
+/* =========================================
+   FEATURE CARD
+========================================= */
+
+.feature-card {
+    background: #ffffff;
+
+    padding: 30px 25px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e3e9e4;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.06);
+
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+
+    border-color: #8bd49a;
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+.icon-box {
+    width: 65px;
+
+    height: 65px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #e7f7ea;
+
+    border-radius: 50%;
+
+    font-size: 31px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   CARD TEXT
+========================================= */
+
+.feature-card h3 {
+    font-size: 21px;
+
+    color: #218739;
+
+    margin-bottom: 12px;
+}
+
+.feature-card > p {
+    color: #666;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    min-height: 96px;
+}
+
+.feature-card ul {
+    margin: 18px 0;
+
+    padding-left: 18px;
+
+    color: #555;
+}
+
+.feature-card li {
+    font-size: 13px;
+
+    margin-bottom: 6px;
+}
+
+
+/* =========================================
+   CARD LINK
+========================================= */
+
+.feature-card a {
+    color: #218739;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+.feature-card a:hover {
+    color: #145c27;
+}
+
+
+/* =========================================
+   IMPACT SECTION
+========================================= */
+
+.impact-section {
+    background: #eef8ef;
+
+    padding: 75px 20px;
+
+    text-align: center;
+}
+
+.impact-content {
+    max-width: 1000px;
+
+    margin: auto;
+}
+
+.impact-content h2 {
+    color: #222;
+
+    font-size: 34px;
+
+    margin-bottom: 15px;
+}
+
+.impact-content > p {
+    color: #666;
+
+    max-width: 750px;
+
+    margin: 0 auto 40px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================
+   IMPACT GRID
+========================================= */
+
+.impact-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 20px;
+}
+
+.impact-box {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.impact-box h3 {
+    color: #218739;
+
+    font-size: 30px;
+
+    margin-bottom: 5px;
+}
+
+.impact-box p {
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   CTA
+========================================= */
+
+.cta-section {
+    padding: 75px 20px;
+
+    text-align: center;
+
+    background: #218739;
+
+    color: white;
+}
+
+.cta-section h2 {
+    font-size: 34px;
+
+    margin-bottom: 12px;
+}
+
+.cta-section p {
+    margin-bottom: 28px;
+
+    font-size: 17px;
+}
+
+.cta-buttons {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+}
+
+.cta-buttons a {
+    display: inline-block;
+
+    padding: 12px 25px;
+
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    transition: 0.3s;
+}
+
+.volunteer-btn {
+    background: white;
+
+    color: #218739;
+}
+
+.volunteer-btn:hover {
+    background: #e7f7ea;
+}
+
+.donate-btn {
+    color: white;
+
+    border: 2px solid white;
+}
+
+.donate-btn:hover {
+    background: white;
+
+    color: #218739;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.footer {
+    background: #17251a;
+
+    color: white;
+
+    display: grid;
+
+    grid-template-columns: 2fr 1fr 1fr;
+
+    gap: 50px;
+
+    padding: 55px 7%;
+}
+
+.footer-column h3 {
+    margin-bottom: 15px;
+
+    color: white;
+}
+
+.footer-column p {
+    color: #c8d2c9;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    margin-bottom: 8px;
+}
+
+.footer-column a {
+    display: block;
+
+    color: #c8d2c9;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    margin-bottom: 8px;
+}
+
+.footer-column a:hover {
+    color: #72e889;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+    .navbar {
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+    .nav-links {
+        justify-content: center;
+
+        flex-wrap: wrap;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+
+    .navbar {
+        padding: 15px;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+    .nav-links {
+        gap: 10px;
+    }
+
+    .nav-links a {
+        font-size: 12px;
+    }
+
+    .features-hero {
+        min-height: 320px;
+    }
+
+    .hero-content h1 {
+        font-size: 38px;
+    }
+
+    .hero-content p {
+        font-size: 16px;
+    }
+
+    .intro-section h2,
+    .section-heading h2,
+    .impact-content h2,
+    .cta-section h2 {
+        font-size: 27px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .impact-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .footer {
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 400px) {
+
+    .impact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-content h1 {
+        font-size: 32px;
+    }
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+/* Banner */
+.banner-placeholder {
+    width: 100%;
+    height: 350px;
+    background-color: #eaeaea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+}
+
+/* Vision and Mission */
+.vision-mission-section {
+    display: flex;
+    gap: 40px;
+    padding: 40px 5%;
+    background: #fff;
+}
+
+.mission-box, .vision-box {
+    flex: 1;
+}
+
+.mission-box h3, .vision-box h3 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+/* Statistics */
+.stats-section {
+    display: flex;
+    justify-content: space-around;
+    padding: 30px 5%;
+    background-color: #f1f1f1;
+    text-align: center;
+}
+
+.stat-item h2 {
+    color: #d9534f;
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+/* Campaigns */
+.campaign-section {
+    padding: 40px 5%;
+}
+
+.section-title {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.campaign-grid {
+    display: flex;
+    gap: 20px;
+}
+
+.campaign-card {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.card-image-placeholder {
+    height: 150px;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #777;
+}
+
+.card-content {
+    padding: 15px;
+}
+
+.card-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.card-content p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.btn-details {
+    background-color: #0275d8;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 5%;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    margin-top: 40px;
+}
+
+.footer-column h4 {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.footer-column ul {
+    list-style: none;
+}
+
+.footer-column a {
+    text-decoration: none;
+    color: #0275d8;
+}
+
