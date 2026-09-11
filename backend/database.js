@@ -4,7 +4,8 @@ const Database = require('better-sqlite3');
 require('dotenv').config();
 const { migrateDatabase } = require('./migrate');
 
-const dataDirectory = process.env.DATA_DIR || path.join(__dirname, 'data');
+const vercelRuntime = process.env.VERCEL === '1';
+const dataDirectory = process.env.DATA_DIR || (vercelRuntime ? '/tmp/ngo-data' : path.join(__dirname, 'data'));
 fs.mkdirSync(dataDirectory, { recursive: true });
 
 const databasePath = process.env.DB_PATH || path.join(dataDirectory, 'ngo.sqlite');
