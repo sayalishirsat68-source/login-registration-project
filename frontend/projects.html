@@ -387,17 +387,28 @@
         let projectsState = [];
         let currentFilter = 'all';
 
+        function showProjectConnectionError(status) {
+            const message = status === 404
+                ? 'Backend API is not deployed at this URL. Check the deployment root and API function.'
+                : status === 401
+                    ? 'Please log in as an administrator to manage projects.'
+                    : 'The project service is temporarily unavailable. Please try again.';
+            document.getElementById('projectsContainer').innerHTML = `<div class="empty-message">${message}</div>`;
+        }
+
         async function loadProjects() {
             try {
                 const res = await fetch('/api/projects');
+                if (!res.ok) {
+                    showProjectConnectionError(res.status);
+                    return;
+                }
                 const data = await res.json();
                 projectsState = data.projects || [];
                 renderProjectsGrid(projectsState);
                 document.getElementById('stat-projects').textContent = projectsState.length;
             } catch (err) {
-                document.getElementById('projectsContainer').innerHTML = `
-                    <div class="empty-message">Error connecting to server. Please ensure the backend is running.</div>
-                `;
+                showProjectConnectionError(0);
             }
         }
 
@@ -477,7 +488,7 @@
                     document.getElementById('project-form').reset();
                     loadProjects();
                 } else {
-                    showToast(data.message || 'Error creating project', 'error');
+                    showToast(data.message || (res.status === 404 ? 'Project API is not deployed.' : res.status === 401 ? 'Admin login required.' : 'Error creating project'), 'error');
                 }
             } catch (err) {
                 showToast('Network error creating project', 'error');
