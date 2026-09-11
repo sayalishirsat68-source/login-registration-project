@@ -75,25 +75,6 @@
             text-decoration: none;
             font-weight: 600;
         }
-        .demo-box {
-            margin-top: 20px;
-            padding: 12px;
-            background: #f1f5f9;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #475569;
-            text-align: center;
-        }
-        .demo-box button {
-            background: #0284c7;
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 6px;
-        }
         .alert {
             padding: 12px;
             border-radius: 6px;
@@ -152,11 +133,6 @@
                 <button type="submit" class="auth-btn" id="submit-btn">Log In</button>
             </form>
 
-            <div class="demo-box">
-                <p><strong>Demo Credentials:</strong> admin@ngo.org / admin123</p>
-                <button type="button" onclick="fillDemo()">Fill Demo Credentials</button>
-            </div>
-
             <div class="auth-footer">
                 Don't have an account yet? <a href="register.html">Register here</a>
             </div>
@@ -165,11 +141,6 @@
 
     <script src="app.js"></script>
     <script>
-        function fillDemo() {
-            document.getElementById('email').value = 'admin@ngo.org';
-            document.getElementById('password').value = 'admin123';
-        }
-
         const form = document.getElementById('login-form');
         const alertBox = document.getElementById('alert-box');
         const submitBtn = document.getElementById('submit-btn');
