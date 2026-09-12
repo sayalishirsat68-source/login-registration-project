@@ -3,7 +3,11 @@
  * Handles user authentication state, navigation menu synchronization, and notification banners
  */
 
-const apiBaseUrl = String(window.NGO_API_URL || window.VITE_API_URL || '').replace(/\/$/, '');
+const localHosts = ['localhost', '127.0.0.1'];
+const isLocalHost = localHosts.includes(window.location.hostname);
+const isRenderHost = window.location.hostname.endsWith('.onrender.com');
+const defaultApiUrl = isLocalHost || isRenderHost ? '' : 'https://login-registration-project-1.onrender.com';
+const apiBaseUrl = String(window.NGO_API_URL || window.VITE_API_URL || defaultApiUrl).replace(/\/$/, '');
 const nativeFetch = window.fetch.bind(window);
 window.fetch = (input, options = {}) => {
   const requestUrl = typeof input === 'string' ? input : input.url;

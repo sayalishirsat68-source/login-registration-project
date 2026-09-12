@@ -86,8 +86,9 @@ app.use((req, res, next) => {
   const devOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'];
   const allowedOrigins = new Set([...configuredOrigins, ...devOrigins]);
   const requestOrigin = req.headers.origin ? req.headers.origin.replace(/\/$/, '') : null;
+  const isVercelOrigin = requestOrigin && /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(requestOrigin);
 
-  if (requestOrigin && !allowedOrigins.has(requestOrigin)) {
+  if (requestOrigin && !allowedOrigins.has(requestOrigin) && !isVercelOrigin) {
     return error(res, 403, 'Origin is not allowed.');
   }
 
