@@ -77,11 +77,8 @@ app.disable('x-powered-by');
 app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use((req, res, next) => {
-  const configuredOrigins = [
-    ...(process.env.FRONTEND_URL || ''),
-    ...(process.env.ALLOWED_ORIGIN || '')
-  ]
-    .split(',')
+  const configuredOrigins = [process.env.FRONTEND_URL, process.env.ALLOWED_ORIGIN]
+    .flatMap(value => String(value || '').split(','))
     .map(value => value.trim())
     .filter(Boolean)
     .map(value => value.replace(/\/$/, ''));
