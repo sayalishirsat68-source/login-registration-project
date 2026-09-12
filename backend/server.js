@@ -98,8 +98,9 @@ app.use((req, res, next) => {
   const allowedOrigins = new Set([...configuredOrigins, ...devOrigins]);
   const requestOrigin = req.headers.origin ? normalizeOrigin(req.headers.origin) : null;
   const isVercelOrigin = requestOrigin && /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(requestOrigin);
+  const sameOrigin = requestOrigin === normalizeOrigin(`${req.protocol}://${req.get('host')}`);
 
-  if (requestOrigin && !allowedOrigins.has(requestOrigin) && !isVercelOrigin) {
+  if (requestOrigin && !allowedOrigins.has(requestOrigin) && !isVercelOrigin && !sameOrigin) {
     return error(res, 403, 'Origin is not allowed.');
   }
 
