@@ -24,6 +24,7 @@ const email = value => clean(value).toLowerCase();
 const required = (body, fields) => fields.every(field => clean(body[field]));
 const error = (res, status, message) => res.status(status).json({ message });
 const projectView = project => ({ id: project.id, title: project.title, description: project.description, status: project.status, startDate: project.start_date, endDate: project.end_date, location: project.location, imageUrl: project.image_url });
+const normalizeOrigin = value => clean(value).replace(/\/$/, '');
 
 class SQLiteSessionStore extends session.Store {
   get(id, callback) {
@@ -79,13 +80,13 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use((req, res, next) => {
   const configuredOrigins = [process.env.FRONTEND_URL, process.env.ALLOWED_ORIGIN]
     .flatMap(value => String(value || '').split(','))
-    .map(value => value.trim())
+    .map(normalizeOrigin)
     .filter(Boolean)
     .map(value => value.replace(/\/$/, ''));
 
   const devOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'];
   const allowedOrigins = new Set([...configuredOrigins, ...devOrigins]);
-  const requestOrigin = req.headers.origin ? req.headers.origin.replace(/\/$/, '') : null;
+  const requestOrigin = req.headers.origin ? normalizeOrigin(req.headers.origin) : null;
   const isVercelOrigin = requestOrigin && /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(requestOrigin);
 
   if (requestOrigin && !allowedOrigins.has(requestOrigin) && !isVercelOrigin) {
