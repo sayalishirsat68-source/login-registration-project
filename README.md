@@ -88,15 +88,9 @@ SQLite user table
 
 ## Vercel deployment
 
-The repository includes `vercel.json` so Vercel deploys the Express entry point instead of expecting a static `public` output directory. Configure these environment variables in the Vercel project settings:
+Vercel serves the static files from `frontend/`. Deploy the repository as a Vercel project without a build command. The frontend automatically sends API requests to the Render service at `https://login-registration-project.onrender.com`; change `NGO_API_URL` in `frontend/app.js` if the Render service gets a different name.
 
-```text
-NODE_ENV=production
-SESSION_SECRET=<long-random-secret>
-ADMIN_PASSWORD=<strong-admin-password>
-```
-
-SQLite data on serverless hosting is not durable across deployments or instance changes. Use a managed database before production traffic, even though SQLite remains suitable for local development.
+The backend must be deployed separately to Render. SQLite data on serverless hosting is not durable across deployments or instance changes, so use the Render service for the backend and move to a managed database before production traffic.
 
 ## Render deployment
 

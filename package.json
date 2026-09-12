@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "NGO web portal with login and registration system",
   "main": "backend/server.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "node backend/server.js",
     "start": "node backend/server.js",
