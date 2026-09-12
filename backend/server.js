@@ -24,7 +24,7 @@ const email = value => clean(value).toLowerCase();
 const required = (body, fields) => fields.every(field => clean(body[field]));
 const error = (res, status, message) => res.status(status).json({ message });
 const projectView = project => ({ id: project.id, title: project.title, description: project.description, status: project.status, startDate: project.start_date, endDate: project.end_date, location: project.location, imageUrl: project.image_url });
-const normalizeOrigin = value => clean(value).replace(/\/$/, '');
+const normalizeOrigin = value => clean(value).replace(/^['"]|['"]$/g, '').replace(/\/+$/, '');
 
 class SQLiteSessionStore extends session.Store {
   get(id, callback) {
