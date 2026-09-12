@@ -77,15 +77,31 @@ app.disable('x-powered-by');
 app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use((req, res, next) => {
-  const allowedOrigin = process.env.FRONTEND_URL || process.env.ALLOWED_ORIGIN;
-  if (allowedOrigin && req.headers.origin && req.headers.origin !== allowedOrigin) return error(res, 403, 'Origin is not allowed.');
-  if (allowedOrigin && req.headers.origin) {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  const configuredOrigins = [
+    ...(process.env.FRONTEND_URL || ''),
+    ...(process.env.ALLOWED_ORIGIN || '')
+  ]
+    .split(',')
+    .map(value => value.trim())
+    .filter(Boolean)
+    .map(value => value.replace(/\/$/, ''));
+
+  const devOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'];
+  const allowedOrigins = new Set([...configuredOrigins, ...devOrigins]);
+  const requestOrigin = req.headers.origin ? req.headers.origin.replace(/\/$/, '') : null;
+
+  if (requestOrigin && !allowedOrigins.has(requestOrigin)) {
+    return error(res, 403, 'Origin is not allowed.');
+  }
+
+  if (requestOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
     res.setHeader('Vary', 'Origin');
   }
+
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
