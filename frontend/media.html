@@ -248,13 +248,24 @@
 
     <!-- Header and Navigation -->
     <header class="navbar">
-        <div class="logo">Hope Hand NGO</div>
     </header>
 
     <!-- Banner -->
     <section class="media-hero">
         <h1>Media, Press & Stories</h1>
         <p>Explore our recent press releases, national media features, and photo galleries documenting positive change on the ground.</p>
+    </section>
+
+    <section class="hope-content-section">
+        <div class="hope-section-heading">
+            <h2>See the Work Behind the Stories</h2>
+            <p>Our media space shares the people, activities, and small moments that shape Hope Hand projects. Explore updates from learning spaces, health outreach, community events, and volunteer activities.</p>
+        </div>
+        <div class="hope-card-grid">
+            <article class="hope-card"><h3>Community Activities</h3><p>Snapshots of local conversations, shared spaces, and activities planned with residents.</p></article>
+            <article class="hope-card"><h3>Education Activities</h3><p>Stories from learning sessions, resource distribution, and encouragement for young learners.</p></article>
+            <article class="hope-card"><h3>Healthcare and Volunteer Work</h3><p>Short updates showing how volunteers support outreach, information sharing, and community care.</p></article>
+        </div>
     </section>
 
     <!-- PUBLIC VIEW -->
@@ -278,6 +289,25 @@
         </div>
     </main>
 
+    <section class="hope-content-section">
+        <div class="hope-section-heading">
+            <h2>Stories That Keep Us Connected</h2>
+            <p>Good communication helps supporters understand where effort is going and helps communities see their own work reflected with respect.</p>
+        </div>
+        <div class="hope-card-grid">
+            <article class="hope-card"><h3>Field Highlights</h3><p>Look for concise updates about project milestones, community participation, and lessons from the field.</p></article>
+            <article class="hope-card"><h3>Press and Coverage</h3><p>Read announcements and media coverage that provide context for Hope Hand initiatives.</p></article>
+            <article class="hope-card"><h3>Share the Message</h3><p>Responsible sharing helps more people discover ways to volunteer, contribute, or connect with a local need.</p></article>
+        </div>
+    </section>
+
+    <section class="hope-cta">
+        <h2>Stay Close to the Work</h2>
+        <p>Follow our updates and turn what you learn into a practical act of support.</p>
+        <a href="join us.html">Join Us</a>
+        <a class="secondary" href="donate.html">Support a Project</a>
+    </section>
+
 
     <footer class="footer" style="background:#1f3a52; color:white; padding:25px; text-align:center; margin-top:50px;">
         &copy; 2026 Hope Hand NGO. Bringing transparency and news to our community.
@@ -297,7 +327,6 @@
                 const data = await res.json();
                 mediaState = data;
                 renderPublicView();
-                renderAdminTables();
             } catch (err) {
                 console.error('Error fetching media data:', err);
                 showToast('Error loading media data from backend', 'error');
